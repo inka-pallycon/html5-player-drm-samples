@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Shaka Player PallyCon Multi-DRM Sample</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <script src="https://cdn.jsdelivr.net/npm/shaka-player@3/dist/shaka-player.compiled.min.js"></script>
+  <link rel="stylesheet" href="css/mvp.css">
+  <link rel="stylesheet" href="css/scrolldown.css">
+</head>
+
+<body>
+  <header>
+    <h1>PallyCon - Shaka Player Sample v1.0.1</h1>
+    <img alt="shaka logo" src="./media/shaka-logo.png">
+
+    <p>This sample shows how to play streaming content (DASH or HLS) protected by multi-DRM (PlayReady, Widevine,
+      FairPlay Streaming) using Shaka player. Please check the PallyCon and Shaka player docs sites for more
+      information.</p>
+    <p>
+      <a href="https://pallycon.com/docs/en/multidrm/clients/html5-player/" target="_blank"><i>PallyCon Docs
+          &nearr;</i></a>
+      <a href="https://shaka-player-demo.appspot.com/docs/api/index.html" target="_blank"><b>Visit Shaka Player docs
+          &nearr;</b></a>
+    </p>
+    <!-- Scroll down indicator CSS animation -->
+    <div class="container">
+      <div class="chevron"></div>
+      <div class="chevron"></div>
+      <div class="chevron"></div>
+    </div>    
+  </header>
+  <main>
+    <code id="browserCheckResult"></code>
+    <p>
+      <video id="my-player" width="100%" poster="//shaka-player-demo.appspot.com/assets/poster.jpg" controls
+        autoplay></video>
+    </p>
+  </main>
+  <footer>
+    <p align="center">Copyright 2021 <a href="https://inka.co.kr/" target="_blank">INKA Entworks</a></p>
+  </footer>
+</body>
+
+<script type="text/javascript" src="js/pallycon-sample-helper.js"></script>
+<script type="text/javascript" src="js/shaka-sample.js"></script>
+
+</html>

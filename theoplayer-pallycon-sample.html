@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>THEOPlayer PallyCon Multi-DRM Sample</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="css/mvp.css">
+    <link rel="stylesheet" href="css/scrolldown.css">
+
+    <!-- THEOplayer library and css -->
+    <script type="text/javascript"
+        src="https://cdn.theoplayer.com/dash/theoplayer/THEOplayer.js"></script> 
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.theoplayer.com/dash/theoplayer/ui.css" />
+</head>
+
+<body>
+    <header>
+        <h1>PallyCon - THEOPlayer Sample v1.0.1</h1>
+        <img alt="THEOplayer logo" src="./media/theoplayer-logo.png">
+
+        <p>This sample shows how to play streaming content (DASH or HLS) protected by multi-DRM (PlayReady, Widevine,
+            FairPlay Streaming) using THEOplayer. Please check the PallyCon and THEOplayer Docs sites for more
+            information.</p>
+        <p>
+            <a href="https://pallycon.com/docs/en/multidrm/clients/html5-player/" target="_blank"><i>PallyCon Docs
+                    &nearr;</i></a>
+            <a href="https://docs.theoplayer.com/how-to-guides/04-drm/15-pallycon.md" target="_blank"><b>Visit
+                    THEOplayer docs &nearr;</b></a>
+        </p>
+        <!-- Scroll down indicator CSS animation -->
+        <div class="container">
+            <div class="chevron"></div>
+            <div class="chevron"></div>
+            <div class="chevron"></div>
+          </div>
+    </header>
+    <main>
+        <code id="browserCheckResult"></code>
+        <p>
+            <div class="my-player video-js theoplayer-skin vjs-16-9"></div>
+        </p>
+    </main>
+    <footer>
+        <p align="center">Copyright 2021 <a href="https://inka.co.kr/" target="_blank">INKA Entworks</a></p>
+    </footer>
+</body>
+
+<script type="text/javascript" src="js/pallycon-sample-helper.js"></script>
+<script type="text/javascript" src="js/theoplayer-sample.js"></script>
+
+</html>
