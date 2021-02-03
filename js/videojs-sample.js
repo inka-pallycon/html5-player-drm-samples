@@ -23,7 +23,7 @@ function configureDRM() {
                             })
                         },
                         getContentId: function (emeOptions, initData) {
-                            const contentId = arrayBufferToString(initData);
+                            const contentId = arrayToString(initData);
                             return contentId.substring(contentId.indexOf('skd://') + 6);
                         },
                         getLicense: function (emeOptions, contentId, keyMessage, callback) {

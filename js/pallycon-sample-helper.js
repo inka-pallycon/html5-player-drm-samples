@@ -60,6 +60,11 @@ function checkBrowser() {
   return browser;
 }
 
+function arrayToString(array) {
+  var uint16array = new Uint16Array(array.buffer);
+  return String.fromCharCode.apply(null, uint16array);
+}
+
 function arrayBufferToString(buffer) {
   var arr = new Uint8Array(buffer);
   var str = String.fromCharCode.apply(String, arr);
