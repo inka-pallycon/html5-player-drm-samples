@@ -5,7 +5,7 @@ var drmType = 'No DRM';
 var dashUri = 'https://contents.pallycon.com/bunny/stream.mpd';
 var hlsUri = 'https://contents.pallycon.com/bunny/hls/master.m3u8';
 
-var licenseUri = 'https://license.pallycon.com/ri/licenseManager.do';
+var licenseUri = 'https://license-global.pallycon.com/ri/licenseManager.do';
 
 // Replace the DEMO site ID with yours when you test your own FPS content.
 var fairplayCertUri = 'https://license.pallycon.com/ri/fpsKeyManager.do?siteId=DEMO';
