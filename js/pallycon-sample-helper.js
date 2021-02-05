@@ -8,7 +8,7 @@ var hlsUri = 'https://contents.pallycon.com/bunny/hls/master.m3u8';
 var licenseUri = 'https://license-global.pallycon.com/ri/licenseManager.do';
 
 // Replace the DEMO site ID with yours when you test your own FPS content.
-var fairplayCertUri = 'https://license.pallycon.com/ri/fpsKeyManager.do?siteId=DEMO';
+var fairplayCertUri = 'https://license-global.pallycon.com/ri/fpsKeyManager.do?siteId=DEMO';
 
 // Create and set the license tokens when you test your own content.
 var widevineToken = 'eyJrZXlfcm90YXRpb24iOmZhbHNlLCJyZXNwb25zZV9mb3JtYXQiOiJvcmlnaW5hbCIsInVzZXJfaWQiOiJ0ZXN0LXVzZXIiLCJkcm1fdHlwZSI6IldpZGV2aW5lIiwic2l0ZV9pZCI6IkRFTU8iLCJoYXNoIjoiRFNEQ0JwWmhJYVR5VG1MMzlCXC9Yb2IyNzRobWpWXC9oWEp4T1V0K29hZ1pjPSIsImNpZCI6ImJpZ2J1Y2tidW5ueSIsInBvbGljeSI6Im41eDI4dVltRGRQQ0ZpbW9NM25HTnc9PSIsInRpbWVzdGFtcCI6IjIwMjEtMDEtMDZUMDk6MjI6MzZaIn0=';
