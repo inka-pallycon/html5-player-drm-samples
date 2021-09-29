@@ -34,7 +34,7 @@ const prepareCertificate = function (rawResponse) {
 
 const initPlayer = function (drmType) {
     let settings = {
-        licenseKey: 'eXZmZ29wcmxycEAxNjI2MjYx',
+        licenseKey: '',
         autoHeightMode: true,
         autoHeightModeRatio: 1.77,
     };
