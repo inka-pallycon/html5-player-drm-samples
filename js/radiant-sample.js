@@ -1,3 +1,6 @@
+// TODO: You need to input your Radiant Media Player license key here.
+let radiantKey = "RADIANTKEY";
+
 const config = [{
     "initDataTypes": ["cenc"],
     "audioCapabilities": [{
@@ -7,20 +10,12 @@ const config = [{
         "contentType": "video/mp4;codecs=\"avc1.42E01E\""
     }]
 }];
+
 const extractContentId = function (initData) {
     const contentId = arrayToString(initData);
     return contentId.substring(contentId.indexOf('skd://') + 6);
 };
 
-function configureDRM() {
-    if('FairPlay' === drmType){
-        initPlayer('FairPlay');
-    }else{
-        checkWidevineSupport();
-    }
-}
-// We need to test what DRM is supported (Widevine first, PlayReady second)
-// Based on the result of that detection we will init the player with the correct DRM token
 const prepareCertificate = function (rawResponse) {
     const responseText = String.fromCharCode.apply(null, new Uint8Array(rawResponse));
     const raw = window.atob(responseText);
@@ -32,13 +27,13 @@ const prepareCertificate = function (rawResponse) {
     return certificate;
 };
 
-const initPlayer = function (drmType) {
+function configurePlayer() {    
     let settings = {
-        licenseKey: '',
+        licenseKey: radiantKey,
         autoHeightMode: true,
         autoHeightModeRatio: 1.77,
     };
-    console.log(drmType);
+
     if('FairPlay' === drmType) {
         settings.src = {fps: hlsUri};
         settings.fpsDrm = {
@@ -86,40 +81,13 @@ const initPlayer = function (drmType) {
             }
         };
     }
-    console.log('settings : ', settings);
     const elementID = 'my-player';
     const rmp = new RadiantMP(elementID);
     rmp.init(settings);
 };
 
-const checkPlayReadySupport = function () {
-    navigator.
-    requestMediaKeySystemAccess("com.microsoft.playready", config).
-    then(mediaKeySystemAccess => {
-        console.log('PlayReady DRM is supported');
-        initPlayer('PlayReady');
-    }).catch(e => {
-        console.log('PlayReady DRM is NOT supported');
-        console.log(e);
-    });
-};
-
-const checkWidevineSupport = function () {
-    if (typeof navigator.requestMediaKeySystemAccess === 'function') {
-        navigator.
-        requestMediaKeySystemAccess("com.widevine.alpha", config).
-        then(mediaKeySystemAccess => {
-            console.log('Widevine DRM is supported');
-            initPlayer('Widevine');
-        }).catch(e => {
-            console.log('Widevine DRM is NOT supported - checking for PlayReady DRM');
-            console.log(e);
-            checkPlayReadySupport();
-        });
-    } else {
-        console.log('Missing requestMediaKeySystemAccess support');
-    }
-};
-
 checkBrowser();
-configureDRM();
+configurePlayer();
+
+if ('RADIANTKEY' === radiantKey)
+    window.alert('To run this sample, you need to input your Radiant Media Player license key in radiant-sample.js file.');

@@ -1,13 +1,13 @@
 // TODO: You need to set your THEOplayer license key here.
 let theoplayerKey = "YOUR_THEOPLAYER_LICENSE_KEY";
 
-var element = document.querySelector(".my-player");
-var player = new THEOplayer.Player(element, {
-    libraryLocation: "https://cdn.theoplayer.com/dash/theoplayer/",
-    license: theoplayerKey
-});
+function configurePlayer() {
+    var element = document.querySelector(".my-player");
+    var player = new THEOplayer.Player(element, {
+        libraryLocation: "https://cdn.theoplayer.com/dash/theoplayer/",
+        license: theoplayerKey
+    });
 
-function configureDRM() {
     if ('FairPlay' === drmType) {
         player.network.addResponseInterceptor(function (response) {
             if (response.url == fairplayCertUri) {
@@ -77,16 +77,3 @@ configureDRM();
 
 if ('YOUR_THEOPLAYER_LICENSE_KEY' === theoplayerKey)
     window.alert('To run this sample, you need to input your theoplayer license key in theoplayer-sample.js file.');
-
-/*
-// synchronizing asynchronous functions in order
-async function checkAndConfigureDRM() {
-    await checkSupportedDRM();
-
-    // checks if the supported DRM is properly set
-    console.log("Supported DRM System: " + supportedDRM);
-    await configureDRM();
-}
-
-checkAndConfigureDRM();
-*/

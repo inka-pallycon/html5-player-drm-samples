@@ -1,6 +1,6 @@
 var player = videojs('my-player');
 
-function configureDRM() {
+function configurePlayer() {
     player.ready(function () {
         let playerConfig;
         player.eme();
@@ -82,6 +82,6 @@ function configureDRM() {
 }
 
 checkBrowser();
-configureDRM();
+configurePlayer();
 
 player.play();
