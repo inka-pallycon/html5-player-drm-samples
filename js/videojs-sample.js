@@ -1,6 +1,6 @@
 var player = videojs('my-player');
 
-function configurePlayer() {
+function configureDRM() {
     player.ready(function () {
         let playerConfig;
         player.eme();
@@ -47,32 +47,48 @@ function configurePlayer() {
                     }
                 }
             };
+
         } else if ('PlayReady' === drmType) {
+
             playerConfig = {
                 src: dashUri,
-                type: 'application/dash+xml',
-                keySystems: {
-                    'com.microsoft.playready': {
-                        url: licenseUri,
-                        licenseHeaders: {
-                            'pallycon-customdata-v2': playreadyToken
-                        }
+                type: 'application/dash+xml'
+            };
+
+            playerConfig.keySystemOptions = [];
+            playerConfig.keySystemOptions.push({
+                name: 'com.microsoft.playready',
+                options: {
+                    serverURL: licenseUri,
+                    httpRequestHeaders:{
+                        'pallycon-customdata-v2': playreadyToken
                     }
                 }
-            };
+            });
+
+
+
+
         } else if ('Widevine' === drmType) {
+
             playerConfig = {
                 src: dashUri,
-                type: 'application/dash+xml',
-                keySystems: {
-                    'com.widevine.alpha': {
-                        url: licenseUri,
-                        licenseHeaders: {
-                            'pallycon-customdata-v2': widevineToken
-                        }
+                type: 'application/dash+xml'
+            };
+
+            playerConfig.keySystemOptions = [];
+            playerConfig.keySystemOptions.push({
+                name: 'com.widevine.alpha',
+                options: {
+                    serverURL: licenseUri,
+                    httpRequestHeaders:{
+                        'pallycon-customdata-v2': widevineToken
                     }
                 }
-            };
+            });
+
+
+
         } else {
             console.log("No DRM supported in this browser");
         }
@@ -82,6 +98,8 @@ function configurePlayer() {
 }
 
 checkBrowser();
-configurePlayer();
+player.ready(function(){
+    configureDRM();
+});
 
 player.play();
