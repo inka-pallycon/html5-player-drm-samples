@@ -165,5 +165,7 @@ function onError(error) {
     console.error('Error code', error.code, 'object', error);
 }
 
-checkBrowser();
-document.addEventListener('DOMContentLoaded', initApp);
+checkSupportedDRM().then(()=> {
+    checkBrowser();
+    document.addEventListener('DOMContentLoaded', initApp);
+})

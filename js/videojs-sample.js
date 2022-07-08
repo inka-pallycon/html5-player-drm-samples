@@ -97,9 +97,10 @@ function configureDRM() {
     });
 }
 
-checkBrowser();
-player.ready(function(){
-    configureDRM();
-});
-
-player.play();
+checkSupportedDRM().then(() => {
+    checkBrowser();
+    player.ready(function(){
+        configureDRM();
+    });
+    player.play();
+})
