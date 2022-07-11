@@ -47,15 +47,12 @@ function configureDRM() {
                     }
                 }
             };
-
         } else if ('PlayReady' === drmType) {
-
             playerConfig = {
                 src: dashUri,
-                type: 'application/dash+xml'
+                type: 'application/dash+xml',
+                keySystemOptions: []
             };
-
-            playerConfig.keySystemOptions = [];
             playerConfig.keySystemOptions.push({
                 name: 'com.microsoft.playready',
                 options: {
@@ -65,18 +62,12 @@ function configureDRM() {
                     }
                 }
             });
-
-
-
-
         } else if ('Widevine' === drmType) {
-
             playerConfig = {
                 src: dashUri,
-                type: 'application/dash+xml'
+                type: 'application/dash+xml',
+                keySystemOptions : []
             };
-
-            playerConfig.keySystemOptions = [];
             playerConfig.keySystemOptions.push({
                 name: 'com.widevine.alpha',
                 options: {
@@ -86,13 +77,9 @@ function configureDRM() {
                     }
                 }
             });
-
-
-
         } else {
             console.log("No DRM supported in this browser");
         }
-
         player.src(playerConfig);
     });
 }
