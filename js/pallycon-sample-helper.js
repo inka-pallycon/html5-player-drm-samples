@@ -104,69 +104,6 @@ async function checkSupportedDRM() {
   }
 }
 
-// async function checkSupportedDRM() {
-//   const config = [
-//     {
-//       initDataTypes: ['cenc'],
-//       audioCapabilities: [
-//         {
-//           contentType: 'audio/mp4;codecs="mp4a.40.2"',
-//         },
-//       ],
-//       videoCapabilities: [
-//         {
-//           contentType: 'video/mp4;codecs="avc1.42E01E"',
-//         },
-//       ],
-//     },
-//   ];
-//   try {
-//     await navigator
-//         .requestMediaKeySystemAccess('com.widevine.alpha', config)
-//         .then(function (mediaKeySystemAccess) {
-//           drmType = 'Widevine';
-//           console.log('widevine support ok');
-//         })
-//         .catch(function (e) {
-//           console.log('no widevine support');
-//           console.log(e);
-//         });
-//   } catch (e) {
-//     console.log('no widevine support');
-//     console.log(e);
-//   }
-//   try {
-//     await navigator
-//         .requestMediaKeySystemAccess('com.microsoft.playready', config)
-//         .then(function (mediaKeySystemAccess) {
-//           drmType = 'PlayReady';
-//           console.log('playready support ok');
-//         })
-//         .catch(function (e) {
-//           console.log('no playready support');
-//           console.log(e);
-//         });
-//   } catch (e) {
-//     console.log('no playready support');
-//     console.log(e);
-//   }
-//   try {
-//     await navigator
-//         .requestMediaKeySystemAccess('com.apple.fps.1_0', config)
-//         .then(function (mediaKeySystemAccess) {
-//           drmType = 'FairPlay';
-//           console.log('fairplay support ok');
-//         })
-//         .catch(function (e) {
-//           console.log('no fairplay support');
-//           console.log(e);
-//         });
-//   } catch (e) {
-//     console.log('no fairplay support');
-//     console.log(e);
-//   }
-// }
-
 function arrayToString(array) {
   var uint16array = new Uint16Array(array.buffer);
   return String.fromCharCode.apply(null, uint16array);
