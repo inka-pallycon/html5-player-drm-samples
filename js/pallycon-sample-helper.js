@@ -71,52 +71,102 @@ async function checkSupportedDRM() {
       ],
     },
   ];
-  try {
-    await navigator
-        .requestMediaKeySystemAccess('com.widevine.alpha', config)
-        .then(function (mediaKeySystemAccess) {
-          drmType = 'Widevine';
-          console.log('widevine support ok');
-        })
-        .catch(function (e) {
-          console.log('no widevine support');
-          console.log(e);
-        });
-  } catch (e) {
-    console.log('no widevine support');
-    console.log(e);
+  const drm = {
+    Widevine: {
+      name: 'Widevine',
+      mediaKey: 'com.widevine.alpha',
+    },
+    PlayReady: {
+      name: 'PlayReady',
+      mediaKey: 'com.microsoft.playready',
+    },
+    FairPlay: {
+      name: 'FairPlay',
+      mediaKey: 'com.apple.fps.1_0',
+    },
+  };
+  let supportedDRMType = '';
+  for (const key in drm) {
+    try {
+      await navigator
+          .requestMediaKeySystemAccess(drm[key].mediaKey, config)
+          .then((mediaKeySystemAccess) => {
+            supportedDRMType = drm[key].name;
+            console.log(supportedDRMType + ' support ok');
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+    } catch (e) {
+      console.log(e);
+    }
   }
-  try {
-    await navigator
-        .requestMediaKeySystemAccess('com.microsoft.playready', config)
-        .then(function (mediaKeySystemAccess) {
-          drmType = 'PlayReady';
-          console.log('playready support ok');
-        })
-        .catch(function (e) {
-          console.log('no playready support');
-          console.log(e);
-        });
-  } catch (e) {
-    console.log('no playready support');
-    console.log(e);
-  }
-  try {
-    await navigator
-        .requestMediaKeySystemAccess('com.apple.fps.1_0', config)
-        .then(function (mediaKeySystemAccess) {
-          drmType = 'FairPlay';
-          console.log('fairplay support ok');
-        })
-        .catch(function (e) {
-          console.log('no fairplay support');
-          console.log(e);
-        });
-  } catch (e) {
-    console.log('no fairplay support');
-    console.log(e);
-  }
+  drmType = supportedDRMType;
+  console.log(drmType)
 }
+
+// async function checkSupportedDRM() {
+//   const config = [
+//     {
+//       initDataTypes: ['cenc'],
+//       audioCapabilities: [
+//         {
+//           contentType: 'audio/mp4;codecs="mp4a.40.2"',
+//         },
+//       ],
+//       videoCapabilities: [
+//         {
+//           contentType: 'video/mp4;codecs="avc1.42E01E"',
+//         },
+//       ],
+//     },
+//   ];
+//   try {
+//     await navigator
+//         .requestMediaKeySystemAccess('com.widevine.alpha', config)
+//         .then(function (mediaKeySystemAccess) {
+//           drmType = 'Widevine';
+//           console.log('widevine support ok');
+//         })
+//         .catch(function (e) {
+//           console.log('no widevine support');
+//           console.log(e);
+//         });
+//   } catch (e) {
+//     console.log('no widevine support');
+//     console.log(e);
+//   }
+//   try {
+//     await navigator
+//         .requestMediaKeySystemAccess('com.microsoft.playready', config)
+//         .then(function (mediaKeySystemAccess) {
+//           drmType = 'PlayReady';
+//           console.log('playready support ok');
+//         })
+//         .catch(function (e) {
+//           console.log('no playready support');
+//           console.log(e);
+//         });
+//   } catch (e) {
+//     console.log('no playready support');
+//     console.log(e);
+//   }
+//   try {
+//     await navigator
+//         .requestMediaKeySystemAccess('com.apple.fps.1_0', config)
+//         .then(function (mediaKeySystemAccess) {
+//           drmType = 'FairPlay';
+//           console.log('fairplay support ok');
+//         })
+//         .catch(function (e) {
+//           console.log('no fairplay support');
+//           console.log(e);
+//         });
+//   } catch (e) {
+//     console.log('no fairplay support');
+//     console.log(e);
+//   }
+// }
 
 function arrayToString(array) {
   var uint16array = new Uint16Array(array.buffer);

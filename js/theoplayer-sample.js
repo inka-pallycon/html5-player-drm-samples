@@ -74,7 +74,7 @@ function configurePlayer() {
 
 checkSupportedDRM().then(() => {
     checkBrowser();
-    configureDRM();
+    configurePlayer();
 })
 
 if ('YOUR_THEOPLAYER_LICENSE_KEY' === theoplayerKey)
