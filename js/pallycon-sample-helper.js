@@ -100,9 +100,8 @@ async function checkSupportedDRM() {
     } catch (e) {
       console.log(e);
     }
+    drmType = supportedDRMType;
   }
-  drmType = supportedDRMType;
-  console.log(drmType)
 }
 
 // async function checkSupportedDRM() {
