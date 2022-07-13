@@ -72,8 +72,10 @@ function configurePlayer() {
     player.autoplay = true;
 }
 
-checkBrowser();
-configureDRM();
+checkSupportedDRM().then(() => {
+    checkBrowser();
+    configurePlayer();
+})
 
 if ('YOUR_THEOPLAYER_LICENSE_KEY' === theoplayerKey)
     window.alert('To run this sample, you need to input your theoplayer license key in theoplayer-sample.js file.');

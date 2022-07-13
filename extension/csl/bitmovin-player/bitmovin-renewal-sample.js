@@ -40,8 +40,6 @@ var player = new bitmovin.player.Player(container, config);
 if ('YOUR_BITMOVIN_LICENSE_KEY' === config.key)
     window.alert('To run this sample, you need to input your bitmovin license key in bitmovin-renewal-sample.js file.');
 
-checkBrowser();
-
 
 
 player.on(bitmovin.player.PlayerEvent.Playing, function () {
@@ -59,15 +57,16 @@ player.on(bitmovin.player.PlayerEvent.DrmLicenseAdded, function(drmLicense){
 });
 
 
-player.load(source).then(
-    function () {
-        console.log('Successfully created Bitmovin Player instance');
-        player.play();
-
-
-    },
-    function (reason) {
-        console.log('Error while creating Bitmovin Player instance');
-    }
-);
+checkSupportedDRM().then(()=> {
+    checkBrowser();
+    player.load(source).then(
+        function () {
+            console.log('Successfully created Bitmovin Player instance');
+            player.play();
+        },
+        function (reason) {
+            console.log('Error while creating Bitmovin Player instance');
+        }
+    );
+})
 

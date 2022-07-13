@@ -86,8 +86,10 @@ function configurePlayer() {
     rmp.init(settings);
 };
 
-checkBrowser();
-configurePlayer();
+checkSupportedDRM().then(() => {
+    checkBrowser();
+    configurePlayer();
+})
 
 if ('RADIANTKEY' === radiantKey)
     window.alert('To run this sample, you need to input your Radiant Media Player license key in radiant-sample.js file.');

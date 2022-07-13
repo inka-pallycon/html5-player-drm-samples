@@ -30,35 +30,78 @@ function checkBrowser() {
     } else if (agent.indexOf('edge/') > -1) { // Edge
       browser = 'Edge';
     }
-    drmType = "PlayReady";
   } else if (agent.indexOf('safari') > -1) { // Chrome or Safari
     if (agent.indexOf('opr') > -1) { // Opera
       browser = 'Opera';
-      drmType = 'Widevine';
     } else if (agent.indexOf('whale') > -1) { // Chrome
       browser = 'Whale';
-      drmType = 'Widevine';
     } else if (agent.indexOf('edg/') > -1 || agent.indexOf('Edge/') > -1) { // Chrome
       browser = 'Edge';
-      drmType = "PlayReady";
     } else if (agent.indexOf('chrome') > -1) { // Chrome
       browser = 'Chrome';
-      drmType = 'Widevine';
     } else { // Safari
       browser = 'Safari';
-      drmType = "FairPlay";
     }
   } else if (agent.indexOf('firefox') > -1) { // Firefox
     browser = 'firefox';
-    drmType = 'Widevine';
   }
 
-  // The below three lines are for the sample code only. May need to be removed.
-  var result = "Running in " + browser + ". " + drmType + " supported.";
-  document.getElementById("browserCheckResult").innerHTML = result;
-  console.log(result);
+    // The below three lines are for the sample code only. May need to be removed.
+    var result = "Running in " + browser + ". " + drmType + " supported.";
+    document.getElementById("browserCheckResult").innerHTML = result;
+    console.log(result);
 
   return browser;
+}
+
+// checks which DRM is supported by the browser
+async function checkSupportedDRM() {
+  const config = [
+    {
+      initDataTypes: ['cenc'],
+      audioCapabilities: [
+        {
+          contentType: 'audio/mp4;codecs="mp4a.40.2"',
+        },
+      ],
+      videoCapabilities: [
+        {
+          contentType: 'video/mp4;codecs="avc1.42E01E"',
+        },
+      ],
+    },
+  ];
+  const drm = {
+    Widevine: {
+      name: 'Widevine',
+      mediaKey: 'com.widevine.alpha',
+    },
+    PlayReady: {
+      name: 'PlayReady',
+      mediaKey: 'com.microsoft.playready',
+    },
+    FairPlay: {
+      name: 'FairPlay',
+      mediaKey: 'com.apple.fps.1_0',
+    },
+  };
+  let supportedDRMType = '';
+  for (const key in drm) {
+    try {
+      await navigator
+          .requestMediaKeySystemAccess(drm[key].mediaKey, config)
+          .then((mediaKeySystemAccess) => {
+            supportedDRMType = drm[key].name;
+            console.log(supportedDRMType + ' support ok');
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+    } catch (e) {
+      console.log(e);
+    }
+    drmType = supportedDRMType;
+  }
 }
 
 function arrayToString(array) {
@@ -127,194 +170,3 @@ function getFairplayCert() {
   console.log('fpsCert decrypt : ', fpsCert);
   return fpsCert;
 }
-
-// global variant to store the name of detected DRM
-let supportedDRM = "no support";
-
-// checks which DRM is supported by the browser
-function checkSupportedDRM() {
-  console.log("checkSupportedDRM start");
-
-  var configCENC = [{
-    "initDataTypes": ["cenc"],
-    "audioCapabilities": [{
-      "contentType": "audio/mp4;codecs=\"mp4a.40.2\""
-    }],
-    "videoCapabilities": [{
-      "contentType": "video/mp4;codecs=\"avc1.42E01E\""
-    }]
-  }];
-
-  var configFPS = [{
-    "audioCapabilities": [{
-      "contentType": "audio/mp4;codecs=\"mp4a.40.2\""
-    }],
-    "videoCapabilities": [{
-      "contentType": "video/mp4;codecs=\"avc1.42E01E\""
-    }]
-  }];
-
-  // Checks if the browser support PlayReady DRM
-  try {
-    navigator.
-    requestMediaKeySystemAccess("com.microsoft.playready", configCENC).
-    then(function (mediaKeySystemAccess) {
-      console.log('playready support ok');
-      supportedDRM = "PlayReady";
-      return; // Stops the checking here because we found PlayReady DRM 
-    }).catch(function (e) {
-      console.log('no playready support');
-      console.log(e);
-    });
-  } catch (e) {
-    console.log('no playready support');
-    console.log(e);
-  }
-
-  // If no PlayReady, checks if there's Widevine DRM
-  try {
-    navigator.
-    requestMediaKeySystemAccess("com.widevine.alpha", configCENC).
-    then(function (mediaKeySystemAccess) {
-      console.log('widevine support ok');
-      supportedDRM = "Widevine";
-      return; // Stops when Widevine DRM is found
-    }).catch(function (e) {
-      console.log('no widevine support');
-      console.log(e);
-    });
-  } catch (e) {
-    console.log('no widevine support');
-    console.log(e);
-  }
-
-  /* Below code doesn't work on Safari browser. Commenting out for later use.
-  try {
-    navigator.
-    requestMediaKeySystemAccess("com.apple.fps.1_0", configFPS).
-    then(function (mediaKeySystemAccess) {
-      console.log('fairplay support ok');
-      supportedDRM = "FairPlay";
-      return;
-    }).catch(function (e) {
-      console.log('no fairplay support');
-      console.log(e);
-    });
-  } catch (e) {
-    console.log('no fairplay support');
-    console.log(e);
-  }
-  */
-
-  // Couldn't find either PlaReady nor Widevine.
-  // Let's just consider the browser supports FairPlay for now..
-  console.log('seems the browser is safari (fairplay supported)');
-  supportedDRM = "FairPlay";
-}
-
-/* Commenting out the below code since it doesn't work well on Safari
-
-// EME Check
-var keySystems = {
-  widevine: ['com.widevine.alpha'],
-  playready: ['com.microsoft.playready'],
-  fairplay: ['com.apple.fairplay', 'com.apple.fps.1_0', 'com.apple.fps.2_0']
-};
-
-var keySystemsCount = (function () {
-  var count = 0;
-  for (keysys in keySystems) {
-    if (keySystems.hasOwnProperty(keysys)) {
-      count += keySystems[keysys].length;
-    }
-  }
-  return count;
-})();
-
-var testVideoElement = document.createElement('video');
-var supportedSystems = [];
-var unsupportedSystems = [];
-
-var supportsEncryptedMediaExtension = function () {
-  if (!testVideoElement.mediaKeys) {
-    if (window.navigator.requestMediaKeySystemAccess) {
-      if (typeof window.navigator.requestMediaKeySystemAccess === 'function') {
-        console.log('found default EME');
-        hasEME = true;
-
-        var isKeySystemSupported = function (keySystem) {
-          var config = [{
-            "initDataTypes": ["cenc"],
-            "audioCapabilities": [{
-              "contentType": "audio/mp4;codecs=\"mp4a.40.2\""
-            }],
-            "videoCapabilities": [{
-              "contentType": "video/mp4;codecs=\"avc1.42E01E\""
-            }]
-          }];
-
-          if (window.navigator.requestMediaKeySystemAccess) {
-            window.navigator.requestMediaKeySystemAccess(keySystem, config).then(function (keySystemAccess) {
-              supportedSystems.push(keySystem);
-              supportedDRM = keySystem;
-              console.log(`supported drm: ${keySystem}`);
-            }).catch(function () {
-              unsupportedSystems.push(keySystem);
-            });
-          }
-        };
-
-        var keysys, dummy, i;
-        for (keysys in keySystems) {
-          if (keySystems.hasOwnProperty(keysys)) {
-            for (dummy in keySystems[keysys]) {
-              isKeySystemSupported(keySystems[keysys][dummy]);
-            }
-          }
-        }
-      }
-    } else if (window.MSMediaKeys) {
-      if (typeof window.MSMediaKeys === 'function') {
-        console.log('found MS-EME');
-        hasEME = true;
-        var keysys, dummy, i;
-        for (keysys in keySystems) {
-          if (keySystems.hasOwnProperty(keysys)) {
-            for (dummy in keySystems[keysys]) {
-              if (MSMediaKeys.isTypeSupported(keySystems[keysys][dummy])) {
-                supportedSystems.push(keySystems[keysys][dummy]);
-                console.log('playready support ok');
-                supportedDRM = "PlayReady";
-              } else {
-                unsupportedSystems.push(keySystems[keysys][dummy]);
-              }
-            }
-          }
-        }
-      }
-    } else if (testVideoElement.webkitGenerateKeyRequest) {
-      if (typeof testVideoElement.webkitGenerateKeyRequest === 'function') {
-        console.log('found WebKit EME');
-        hasEME = true;
-        var keysys, dummy, i;
-        for (keysys in keySystems) {
-          if (keySystems.hasOwnProperty(keysys)) {
-            for (dummy in keySystems[keysys]) {
-              if (testVideoElement.canPlayType('video/mp4', keySystems[keysys][dummy])) {
-                supportedSystems.push(keySystems[keysys][dummy]);
-                console.log('fairplay support ok');
-                supportedDRM = "FairPlay";
-              } else {
-                unsupportedSystems.push(keySystems[keysys][dummy]);
-              }
-            }
-          }
-        }
-      }
-    } else {
-      console.log('no supported EME implementation found');
-      hasEME = false;
-    }
-  }
-}
-*/

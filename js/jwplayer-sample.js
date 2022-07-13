@@ -57,5 +57,7 @@ function configurePlayer() {
     });
 }
 
-checkBrowser();
-configurePlayer();
+checkSupportedDRM().then(() => {
+    checkBrowser();
+    configurePlayer();
+})
