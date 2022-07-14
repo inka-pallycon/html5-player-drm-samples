@@ -5,7 +5,9 @@ function initApp() {
     // Check to see if the browser supports the basic APIs Shaka needs.
     if (shaka.Player.isBrowserSupported()) {
         // Everything looks good!
-        initPlayer();
+        checkSupportedDRM().then(()=> {
+            initPlayer();
+        }
     } else {
         // This browser does not have the minimum set of APIs we need.
         console.error('Browser not supported!');
