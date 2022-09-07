@@ -100,7 +100,13 @@ function initPlayer() {
             playerConfig = {
                 drm: {
                     servers: {
-                        'com.microsoft.playready': licenseUri
+                        'com.microsoft.playready':  {
+                            serverURL: licenseUri,
+                            systemStringPriority: [
+                                'com.microsoft.playready.recommendation',
+                                'com.microsoft.playready',
+                            ],
+                        }
                     }
                 }
             };
@@ -122,6 +128,8 @@ function initPlayer() {
             }
         });
     }
+    // This is caption option.
+    player.setTextTrackVisibility(true);
 
     // Try to load a manifest.
     // This is an asynchronous process.
