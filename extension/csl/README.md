@@ -26,8 +26,10 @@
 - You can use the persistentState option to save and use your browser's unique id.
 - [bitmovin-renewal-sample.js](./bitmovin-player/bitmovin-renewal-sample.js#L26)
 ```javascript
-mediaKeySystemConfig: {
-    persistentState: 'required'
+widevine: {
+    'mediaKeySystemConfig': {
+        'persistentState':'required'
+    }
 }
 ```
 

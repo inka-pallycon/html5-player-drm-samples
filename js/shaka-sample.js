@@ -82,6 +82,7 @@ function initPlayer() {
                     },
                     advanced: {
                         'com.widevine.alpha': {
+                            'persistentStateRequired': true,
                             'serverCertificate': serverCertificate
                         }
                     }

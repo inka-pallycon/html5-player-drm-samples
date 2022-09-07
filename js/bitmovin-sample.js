@@ -11,6 +11,9 @@ var source = {
             LA_URL: licenseUri,
             headers: {
                 'pallycon-customdata-v2': widevineToken
+            },
+            mediaKeySystemConfig: {
+                persistentState: 'required'
             }
         },
         playready: {
