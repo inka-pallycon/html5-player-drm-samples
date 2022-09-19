@@ -31,24 +31,16 @@ function initPlayer() {
         playerConfig = {
             drm: {
                 servers: {
-                    'com.apple.fps.1_0': licenseUri
+                    'com.apple.fps': licenseUri
                 },
                 advanced: {
-                    'com.apple.fps.1_0': {
+                    'com.apple.fps': {
                         serverCertificate: fairplayCert
                     }
                 }
             }
         };
 
-        player.configure('drm.initDataTransform', function (initData, initDataType){
-            const skdUri = shaka.util.StringUtils.fromBytesAutoDetect(initData);
-            console.log('skdUri : ' + skdUri);
-            const contentId = skdUri.substring(skdUri.indexOf('skd://') + 6);
-            console.log('contentId : ', contentId);
-            const cert = player.drmInfo().serverCertificate;
-            return shaka.util.FairPlayUtils.initDataTransform(initData, contentId, cert);
-        });
 
         player.getNetworkingEngine().registerRequestFilter(function (type, request) {
             if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
