@@ -165,8 +165,7 @@ function getFairplayCert() {
   }
   xmlhttp.open("GET", fairplayCertUri, false);
   xmlhttp.send();
-  console.log('fpsCert : ', xmlhttp.responseText);
+
   var fpsCert = shaka.util.Uint8ArrayUtils.fromBase64(xmlhttp.responseText);
-  console.log('fpsCert decrypt : ', fpsCert);
   return fpsCert;
 }
