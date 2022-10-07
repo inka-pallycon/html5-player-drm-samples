@@ -6,8 +6,10 @@ function initApp() {
     if (shaka.Player.isBrowserSupported()) {
         // Everything looks good!
         checkSupportedDRM().then(()=> {
+            checkBrowser();
             initPlayer();
-        }
+        })
+
     } else {
         // This browser does not have the minimum set of APIs we need.
         console.error('Browser not supported!');
@@ -15,7 +17,7 @@ function initApp() {
 }
 
 function initPlayer() {
-    let contentUri, playerConfig;
+    let contentUri, playerConfig = {};
     // Create a Player instance.
     const video = document.getElementById('my-player');
     let player = new shaka.Player(video);
@@ -33,24 +35,16 @@ function initPlayer() {
         playerConfig = {
             drm: {
                 servers: {
-                    'com.apple.fps.1_0': licenseUri
+                    'com.apple.fps': licenseUri
                 },
                 advanced: {
-                    'com.apple.fps.1_0': {
+                    'com.apple.fps': {
                         serverCertificate: fairplayCert
                     }
                 }
             }
         };
 
-        player.configure('drm.initDataTransform', function (initData, initDataType){
-            const skdUri = shaka.util.StringUtils.fromBytesAutoDetect(initData);
-            console.log('skdUri : ' + skdUri);
-            const contentId = skdUri.substring(skdUri.indexOf('skd://') + 6);
-            console.log('contentId : ', contentId);
-            const cert = player.drmInfo().serverCertificate;
-            return shaka.util.FairPlayUtils.initDataTransform(initData, contentId, cert);
-        });
 
         player.getNetworkingEngine().registerRequestFilter(function (type, request) {
             if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
@@ -73,10 +67,8 @@ function initPlayer() {
         });
     } else {
         contentUri = dashUri;
-        if ('Widevine' === drmType) {
-            const base64Cert = 'CsECCAMSEBcFuRfMEgSGiwYzOi93KowYgrSCkgUijgIwggEKAoIBAQCZ7Vs7Mn2rXiTvw7YqlbWYUgrVvMs3UD4GRbgU2Ha430BRBEGtjOOtsRu4jE5yWl5KngeVKR1YWEAjp+GvDjipEnk5MAhhC28VjIeMfiG/+/7qd+EBnh5XgeikX0YmPRTmDoBYqGB63OBPrIRXsTeo1nzN6zNwXZg6IftO7L1KEMpHSQykfqpdQ4IY3brxyt4zkvE9b/tkQv0x4b9AsMYE0cS6TJUgpL+X7r1gkpr87vVbuvVk4tDnbNfFXHOggrmWEguDWe3OJHBwgmgNb2fG2CxKxfMTRJCnTuw3r0svAQxZ6ChD4lgvC2ufXbD8Xm7fZPvTCLRxG88SUAGcn1oJAgMBAAE6FGxpY2Vuc2Uud2lkZXZpbmUuY29tEoADrjRzFLWoNSl/JxOI+3u4y1J30kmCPN3R2jC5MzlRHrPMveoEuUS5J8EhNG79verJ1BORfm7BdqEEOEYKUDvBlSubpOTOD8S/wgqYCKqvS/zRnB3PzfV0zKwo0bQQQWz53ogEMBy9szTK/NDUCXhCOmQuVGE98K/PlspKkknYVeQrOnA+8XZ/apvTbWv4K+drvwy6T95Z0qvMdv62Qke4XEMfvKUiZrYZ/DaXlUP8qcu9u/r6DhpV51Wjx7zmVflkb1gquc9wqgi5efhn9joLK3/bNixbxOzVVdhbyqnFk8ODyFfUnaq3fkC3hR3f0kmYgI41sljnXXjqwMoW9wRzBMINk+3k6P8cbxfmJD4/Paj8FwmHDsRfuoI6Jj8M76H3CTsZCZKDJjM3BQQ6Kb2m+bQ0LMjfVDyxoRgvfF//M/EEkPrKWyU2C3YBXpxaBquO4C8A0ujVmGEEqsxN1HX9lu6c5OMm8huDxwWFd7OHMs3avGpr7RP7DUnTikXrh6X0';
-            const serverCertificate = base64DecodeUint8Array(base64Cert);
 
+        if ('Widevine' === drmType) {
             playerConfig = {
                 drm: {
                     servers: {
@@ -84,7 +76,7 @@ function initPlayer() {
                     },
                     advanced: {
                         'com.widevine.alpha': {
-                            'serverCertificate': serverCertificate
+                            'persistentStateRequired': true
                         }
                     }
                 }
@@ -97,12 +89,18 @@ function initPlayer() {
                     request.headers['pallycon-customdata-v2'] = widevineToken;
                 }
             });
-        } else {
+        } else if ('PlayReady' === drmType) {
             playerConfig = {
                 drm: {
                     servers: {
-                        'com.microsoft.playready': licenseUri
-                    }
+                        'com.microsoft.playready': {
+                            serverURL: licenseUri,
+                            systemStringPriority: [
+                                'com.microsoft.playready.recommendation',
+                                'com.microsoft.playready',
+                            ],
+                        },
+                    },
                 }
             };
 
@@ -124,14 +122,17 @@ function initPlayer() {
         });
     }
 
-    // Try to load a manifest.
-    // This is an asynchronous process.
-    player.load(contentUri).then(function () {
-        // This runs if the asynchronous load is successful.
-        console.log('The video has now been loaded!');
-    }).catch(onError); // onError is executed if the asynchronous load fails.
+        // This is caption option.
+        player.setTextTrackVisibility(true);
 
-    player.configure(playerConfig);
+        // Try to load a manifest.
+        // This is an asynchronous process.
+        player.load(contentUri).then(function () {
+            // This runs if the asynchronous load is successful.
+            console.log('The video has now been loaded!');
+        }).catch(function(e){onError(e); console.log(contentUri)}); // onError is executed if the asynchronous load fails.
+
+        player.configure(playerConfig);
 
 }
 
@@ -167,8 +168,4 @@ function onError(error) {
     console.error('Error code', error.code, 'object', error);
 }
 
-checkSupportedDRM().then(()=> {
-    checkBrowser();
-    initPlayer();
-})
 document.addEventListener('DOMContentLoaded', initApp);
