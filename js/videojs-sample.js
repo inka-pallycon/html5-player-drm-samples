@@ -74,7 +74,8 @@ function configureDRM() {
                     serverURL: licenseUri,
                     httpRequestHeaders:{
                         'pallycon-customdata-v2': widevineToken
-                    }
+                    },
+                    persistentState: 'required'
                 }
             });
         } else {

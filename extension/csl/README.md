@@ -22,9 +22,10 @@
 
 
 ### Widevine
+- Support All Player ( persistentState must be set. )
 - WidevineCDM will not be able to identify Chrome uniquely on desktop systems. ( Windows, MacBook .. )
 - You can use the persistentState option to save and use your browser's unique id.
-- [bitmovin-renewal-sample.js](./bitmovin-player/bitmovin-renewal-sample.js#L26)
+- Bitmovin Player ex) [bitmovin-renewal-sample.js](./bitmovin-player/bitmovin-renewal-sample.js#L26)
 ```javascript
 widevine: {
     'mediaKeySystemConfig': {
@@ -34,7 +35,8 @@ widevine: {
 ```
 
 ### PlayReady 
-- [bitmovin-renewal-sample.js](./bitmovin-player/bitmovin-renewal-sample.js#L10)
+- Support Only Bitmovin Player
+- Bitmovin Player ex) [bitmovin-renewal-sample.js](./bitmovin-player/bitmovin-renewal-sample.js#L10)
 ```javascript
 setTimeout(() => {
     player.drm.renewLicense(licenseId)
@@ -43,6 +45,8 @@ setTimeout(() => {
 
 
 ### FairPlay 
+- Support Only Safari FPS SDK
+- There is no player has yet been identified to support fairplay renewal in commercial player. ( We requested to bitmovin player. )
 - [fps_safari_support.js](./fps-sdk/fps_safari_support.js#L59)
 ```javascript
 await delay(600000);  // TODO set Renewal Interval milliseconds ( 10 minute )

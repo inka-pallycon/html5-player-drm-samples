@@ -9,7 +9,8 @@ These samples show how to play streaming content (DASH or HLS) protected with mu
 - HTTP Live Streaming content encrypted with Sample AES and protected by FairPlay Streaming. Applies to Safari browsers running on Mac OS X (10.10 or later).
 
 3. Widevine Desktop's Unique DeviceId
-- PersistentState must be enabled on the player.
+- To use Widevine CSL, PersistentState must be enabled on the player.
+- Add some samples.
 - Shaka Player config : ([docs](https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.AdvancedDrmConfiguration))
 ```javascript
 'com.widevine.alpha': {
@@ -26,6 +27,15 @@ widevine: {
 }
 ```
 
+- VideoJS Player config reference : ([github](https://github.com/videojs/videojs-contrib-eme/blob/main/src/eme.js#L64))
+```javascript
+{
+    name: 'com.widevine.alpha',
+    options: {
+        persistentState: 'required'
+    }
+}
+```
 
 
 ## Extension
