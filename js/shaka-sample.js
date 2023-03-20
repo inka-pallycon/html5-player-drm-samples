@@ -53,6 +53,7 @@ function initPlayer() {
                 const params = 'spc=' + encodeURIComponent(base64Payload);
 
                 request.body = shaka.util.StringUtils.toUTF8(params);
+                request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
                 request.headers['pallycon-customdata-v2'] = fairplayToken;
             }
         });
