@@ -94,15 +94,22 @@ function initPlayer() {
             playerConfig = {
                 drm: {
                     servers: {
-                        'com.microsoft.playready': {
-                            serverURL: licenseUri,
-                            systemStringPriority: [
-                                'com.microsoft.playready.recommendation',
-                                'com.microsoft.playready',
-                            ],
-                        },
+                        'com.microsoft.playready.recommendation':
+                        licenseUri,
                     },
-                }
+                    keySystemsMapping: {
+                        'com.microsoft.playready':
+                            'com.microsoft.playready.recommendation',
+                    },
+                },
+                dash: {
+                    keySystemsByURI: {
+                        'urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95':
+                            'com.microsoft.playready.recommendation',
+                        'urn:uuid:79f0049a-4098-8642-ab92-e65be0885f95':
+                            'com.microsoft.playready.recommendation',
+                    },
+                },
             };
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
