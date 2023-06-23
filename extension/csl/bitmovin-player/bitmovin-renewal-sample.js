@@ -3,6 +3,11 @@ var config =  {
     // TODO: You need to input your bitmovin license key here.
     key: 'YOUR_BITMOVIN_LICENSE_KEY',
     network: {
+        preprocessHttpRequest: function(type, request) {
+            // Setting pallycon customData.
+            setCustomData(type, request);
+            return Promise.resolve(request);
+        },
         preprocessHttpResponse: function(type, response) {
             if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_PLAYREADY) {
 
@@ -15,25 +20,19 @@ var config =  {
     }
 }
 
+
 var source = {
     dash: dashUri,
     drm: {
         widevine: {
             LA_URL: licenseUri,
-            headers: {
-                'pallycon-customdata-v2': widevineToken
-            },
             mediaKeySystemConfig: {
                 persistentState: 'required'
             }
         },
         playready: {
             LA_URL: licenseUri,
-            headers: {
-                'pallycon-customdata-v2': playreadyToken
-            }
         }
-
     }
 };
 
@@ -59,6 +58,24 @@ player.on(bitmovin.player.PlayerEvent.DrmLicenseAdded, function(drmLicense){
     console.log('DrmLicenseAdded ');
 });
 
+// If You Use Token Reset During Playback Suck As CSL or KeyRotation or AirPlay, Create a New Token and Set it.
+function setCustomData(type, request) {
+    if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_WIDEVINE) {
+        // let newWidevineToken = '';
+        // setWidevineToken(newWidevineToken);
+        request.headers['pallycon-customdata-v2'] = widevineToken;
+    }
+    else if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_PLAYREADY) {
+        // let newPlayReadyToken = '';
+        // setPlayReadyToken(newPlayReadyToken);
+        request.headers['pallycon-customdata-v2'] = playreadyToken;
+    }
+    else if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_FAIRPLAY) {
+        // let newFairPlayToken = '';
+        // setFairPlayToken(newFairPlayToken);
+        request.headers['pallycon-customdata-v2'] = fairplayToken;
+    }
+}
 
 checkSupportedDRM().then(()=> {
     checkBrowser();
