@@ -51,7 +51,8 @@ var player = new bitmovin.player.Player(container, config);
 if ('YOUR_BITMOVIN_LICENSE_KEY' === config.key)
     window.alert('To run this sample, you need to input your bitmovin license key in bitmovin-sample.js file.');
 
-// If You Use Token Reset During Playback Suck As CSL or KeyRotation or AirPlay, Create a New Token and Set it.
+// If You Use Token Reset During Playback Suck As CSL or KeyRotation or AirPlay,
+// Continue to create new tokens and Set them.
 function setCustomData(type, request) {
     if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_WIDEVINE) {
         // const newWidevineToken = '';

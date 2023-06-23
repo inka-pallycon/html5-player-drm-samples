@@ -58,7 +58,8 @@ player.on(bitmovin.player.PlayerEvent.DrmLicenseAdded, function(drmLicense){
     console.log('DrmLicenseAdded ');
 });
 
-// If You Use Token Reset During Playback Suck As CSL or KeyRotation or AirPlay, Create a New Token and Set it.
+// If You Use Token Reset During Playback Suck As CSL or KeyRotation or AirPlay,
+// Continue to create new tokens and Set them.
 function setCustomData(type, request) {
     if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_WIDEVINE) {
         // let newWidevineToken = '';
