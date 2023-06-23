@@ -1,6 +1,14 @@
+let index = 1;
 var config = {
     // TODO: You need to input your bitmovin license key here.
-    key: 'YOUR_BITMOVIN_LICENSE_KEY'
+    key: 'YOUR_BITMOVIN_LICENSE_KEY',
+    network: {
+        preprocessHttpRequest: function(type, request) {
+            // Setting pallycon customData.
+            setCustomData(type, request);
+            return Promise.resolve(request);
+        }
+    }
 }
 
 var source = {
@@ -9,25 +17,16 @@ var source = {
     drm: {
         widevine: {
             LA_URL: licenseUri,
-            headers: {
-                'pallycon-customdata-v2': widevineToken
-            },
             mediaKeySystemConfig: {
                 persistentState: 'required'
             }
         },
         playready: {
             LA_URL: licenseUri,
-            headers: {
-                'pallycon-customdata-v2': playreadyToken
-            }
         },
         fairplay: {
             LA_URL: licenseUri,
             certificateURL: fairplayCertUri,
-            headers: {
-                'pallycon-customdata-v2': fairplayToken
-            },
             prepareContentId: function (contentId) {
                 return contentId.substring(contentId.indexOf('skd://') + 6);
             },
@@ -52,6 +51,26 @@ var player = new bitmovin.player.Player(container, config);
 
 if ('YOUR_BITMOVIN_LICENSE_KEY' === config.key)
     window.alert('To run this sample, you need to input your bitmovin license key in bitmovin-sample.js file.');
+
+// If You Use Token Reset During Playback Suck As CSL or KeyRotation or AirPlay,
+// Continue to create new tokens and Set them.
+function setCustomData(type, request) {
+    if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_WIDEVINE) {
+        // const newWidevineToken = '';
+        // setWidevineToken(newWidevineToken);
+        request.headers['pallycon-customdata-v2'] = widevineToken;
+    }
+    else if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_PLAYREADY) {
+        // const newPlayReadyToken = '';
+        // setPlayReadyToken(newPlayReadyToken);
+        request.headers['pallycon-customdata-v2'] = playreadyToken;
+    }
+    else if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_FAIRPLAY) {
+        // const newFairPlayToken = '';
+        // setFairPlayToken(newFairPlayToken);
+        request.headers['pallycon-customdata-v2'] = fairplayToken;
+    }
+}
 
 checkSupportedDRM().then(()=> {
     checkBrowser();

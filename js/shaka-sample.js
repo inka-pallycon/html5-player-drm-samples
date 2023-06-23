@@ -54,7 +54,7 @@ function initPlayer() {
 
                 request.body = shaka.util.StringUtils.toUTF8(params);
                 request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-                request.headers['pallycon-customdata-v2'] = fairplayToken;
+                setCustomData(request);
             }
         });
 
@@ -87,7 +87,7 @@ function initPlayer() {
                 // Only add headers to license requests:
                 if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
                     console.log("request :" + request.body);
-                    request.headers['pallycon-customdata-v2'] = widevineToken;
+                    setCustomData(request);
                 }
             });
         } else if ('PlayReady' === drmType) {
@@ -116,7 +116,7 @@ function initPlayer() {
                 // Only add headers to license requests:
                 if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
                     console.log("request :" + request.body);
-                    request.headers['pallycon-customdata-v2'] = playreadyToken;
+                    setCustomData(request);
                 }
             });
 
@@ -142,6 +142,26 @@ function initPlayer() {
 
         player.configure(playerConfig);
 
+}
+
+// If You Use Token Reset During Playback Suck As CSL or KeyRotation or AirPlay,
+// Continue to create new tokens and Set them.
+function setCustomData(request) {
+    if ('Widevine' === drmType) {
+        // const newWidevineToken = '';
+        // setWidevineToken(newWidevineToken);
+        request.headers['pallycon-customdata-v2'] = widevineToken;
+    }
+    else if ('PlayReady' === drmType) {
+        // const newPlayReadyToken = '';
+        // setPlayReadyToken(newPlayReadyToken);
+        request.headers['pallycon-customdata-v2'] = playreadyToken;
+    }
+    else if ('FairPlay' === drmType) {
+        // const newFairPlayToken = '';
+        // setFairPlayToken(newFairPlayToken);
+        request.headers['pallycon-customdata-v2'] = fairplayToken;
+    }
 }
 
 function parsingResponse(response) {
