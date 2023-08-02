@@ -70,14 +70,14 @@ function configurePlayer() {
         settings.src = {dash: dashUri};
         settings.shakaDrm = {
             servers: {
-                'com.microsoft.playready.recommendation': licenseUri,
+                'com.microsoft.playready':  {
+                    serverURL: licenseUri,
+                    systemStringPriority: [
+                        'com.microsoft.playready.recommendation',
+                        'com.microsoft.playready',
+                    ],
+                }
             },
-        };
-        settings.shakaKeySystemsByURI = {
-            'urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95':
-                'com.microsoft.playready.recommendation',
-            'urn:uuid:79f0049a-4098-8642-ab92-e65be0885f95':
-                'com.microsoft.playready.recommendation',
         };
         settings.shakaRequestConfiguration = {
             license: {
