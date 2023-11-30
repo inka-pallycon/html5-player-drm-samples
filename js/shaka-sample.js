@@ -42,7 +42,10 @@ function initPlayer() {
                         serverCertificate: fairplayCert
                     }
                 }
-            }
+            },
+            streaming: {
+                autoLowLatencyMode: true,
+            },
         };
 
 
@@ -80,7 +83,10 @@ function initPlayer() {
                             'persistentStateRequired': true
                         }
                     }
-                }
+                },
+                streaming: {
+                    autoLowLatencyMode: true,
+                },
             };
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
@@ -102,6 +108,9 @@ function initPlayer() {
                             ],
                         },
                     },
+                },
+                streaming: {
+                    autoLowLatencyMode: true,
                 },
             };
 
