@@ -107,7 +107,7 @@ async function checkSupportedDRM() {
             console.log(supportedDRMType + ' support ok');
           })
           .catch((e) => {
-            console.log(e);
+            console.log(key + ' :: ' + e);
           });
     } catch (e) {
       console.log(e);
