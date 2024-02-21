@@ -51,33 +51,29 @@ function configureDRM() {
             playerConfig = {
                 src: dashUri,
                 type: 'application/dash+xml',
-                keySystemOptions: []
-            };
-            playerConfig.keySystemOptions.push({
-                name: 'com.microsoft.playready',
-                options: {
-                    serverURL: licenseUri,
-                    httpRequestHeaders:{
-                        'pallycon-customdata-v2': playreadyToken
+                keySystems: {
+                    'com.microsoft.playready': {
+                        url: licenseUri,
+                        licenseHeaders:{
+                            'pallycon-customdata-v2': playreadyToken
+                        }
                     }
                 }
-            });
+            };
         } else if ('Widevine' === drmType) {
             playerConfig = {
                 src: dashUri,
                 type: 'application/dash+xml',
-                keySystemOptions : []
-            };
-            playerConfig.keySystemOptions.push({
-                name: 'com.widevine.alpha',
-                options: {
-                    serverURL: licenseUri,
-                    httpRequestHeaders:{
-                        'pallycon-customdata-v2': widevineToken
-                    },
-                    persistentState: 'required'
+                keySystems: {
+                    'com.widevine.alpha': {
+                        url: licenseUri,
+                        licenseHeaders:{
+                            'pallycon-customdata-v2': widevineToken
+                        },
+                        persistentState: 'required'
+                    }
                 }
-            });
+            };
         } else {
             console.log("No DRM supported in this browser");
         }
