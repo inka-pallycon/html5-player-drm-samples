@@ -100,12 +100,26 @@ function initPlayer() {
             playerConfig = {
                 drm: {
                     servers: {
-                        'com.microsoft.playready': {
-                            serverURL: licenseUri,
-                            systemStringPriority: [
+                        'com.microsoft.playready.recommendation':
+                        licenseUri,
+                    },
+                    preferredKeySystems: [
+                        'com.microsoft.playready.recommendation.3000',
+                        'com.microsoft.playready.recommendation',
+                        'com.microsoft.playready',
+                    ],
+                    keySystemsMapping: {
+                        'com.microsoft.playready':
+                            'com.microsoft.playready.recommendation.3000',
+                    },
+                },
+                manifest: {
+                    dash: {
+                        keySystemsByURI: {
+                            'urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95':
                                 'com.microsoft.playready.recommendation',
-                                'com.microsoft.playready',
-                            ],
+                            'urn:uuid:79f0049a-4098-8642-ab92-e65be0885f95':
+                                'com.microsoft.playready.recommendation',
                         },
                     },
                 },
