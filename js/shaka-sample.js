@@ -100,33 +100,35 @@ function initPlayer() {
             playerConfig = {
                 drm: {
                     servers: {
-                        'com.microsoft.playready.recommendation':
-                        licenseUri,
-                    },
-                    preferredKeySystems: [
-                        'com.microsoft.playready.recommendation.3000',
-                        'com.microsoft.playready.recommendation',
-                        'com.microsoft.playready',
-                    ],
-                    keySystemsMapping: {
-                        'com.microsoft.playready':
-                            'com.microsoft.playready.recommendation.3000',
-                    },
-                },
-                manifest: {
-                    dash: {
-                        keySystemsByURI: {
-                            'urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95':
-                                'com.microsoft.playready.recommendation',
-                            'urn:uuid:79f0049a-4098-8642-ab92-e65be0885f95':
-                                'com.microsoft.playready.recommendation',
-                        },
+                        'com.microsoft.playready': licenseUri,
                     },
                 },
                 streaming: {
                     autoLowLatencyMode: true,
                 },
             };
+
+            if (supportSl3000) {
+                playerConfig = {
+                    drm: {
+                        servers: {
+                            'com.microsoft.playready': licenseUri,
+                        },
+                        preferredKeySystems: [
+                            'com.microsoft.playready.recommendation.3000',
+                            'com.microsoft.playready.recommendation',
+                            'com.microsoft.playready',
+                        ],
+                        keySystemsMapping: {
+                            'com.microsoft.playready':
+                                'com.microsoft.playready.recommendation.3000',
+                        },
+                    },
+                    streaming: {
+                        autoLowLatencyMode: true,
+                    },
+                };
+            }
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
                 // Only add headers to license requests:
@@ -204,6 +206,16 @@ function parsingResponse(response) {
 function onErrorEvent(event) {
     // Extract the shaka.util.Error object from the event.
     console.error('Error code', event.detail.code, 'object', event.detail);
+
+    // Support SL3000 but Contents is lower than SL3000
+    if (6006 === event.detail.code && supportSl3000) {
+        window.player.destroy();
+        supportSl3000 = false;
+        setTimeout(() => {
+            initPlayer();
+        }, 500);
+    }
+
     onError(event.detail);
 }
 

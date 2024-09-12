@@ -1,5 +1,6 @@
 var browser = 'Non-DRM browser';
 var drmType = 'No DRM';
+var supportSl3000 = false;
 
 // Replace the DASH and HLS URIs when you test your own content. 
 var dashUri = 'https://contents.pallycon.com/bunny/stream.mpd';
@@ -99,6 +100,25 @@ async function checkSupportedDRM() {
   };
   let supportedDRMType = '';
   for (const key in drm) {
+    // check to support SL3000
+    if (drm[key].name === 'PlayReady') {
+      try {
+        await navigator
+            // @ts-ignore
+            .requestMediaKeySystemAccess(
+                'com.microsoft.playready.recommendation.3000',
+                config,
+            )
+            .then((mediaKeySystemAccess) => {
+              supportSl3000 = true;
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+      } catch (e) {
+        console.log(e);
+      }
+    }
     try {
       await navigator
           .requestMediaKeySystemAccess(drm[key].mediaKey, config)
