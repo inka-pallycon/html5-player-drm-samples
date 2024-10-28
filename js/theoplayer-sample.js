@@ -1,7 +1,7 @@
 // TODO: You need to set your THEOplayer license key here.
 let theoplayerKey = "YOUR_THEOPLAYER_LICENSE_KEY";
 
-function configurePlayer() {
+async function configurePlayer() {
     var element = document.querySelector(".my-player");
     var player = new THEOplayer.Player(element, {
         libraryLocation: "https://cdn.theoplayer.com/dash/theoplayer/",
@@ -44,20 +44,28 @@ function configurePlayer() {
             }
         }
     } else {
-        let drmConfiguration = {
-            playready: {
-                headers: {
-                    'pallycon-customdata-v2': playreadyToken
-                },
-                licenseAcquisitionURL: licenseUri
-            },
-            widevine: {
-                headers: {
-                    'pallycon-customdata-v2': widevineToken
-                },
-                licenseAcquisitionURL: licenseUri
-            }        
-        };
+        let drmConfiguration = {};
+        if ('PlayReady' === drmType) {
+            drmConfiguration = {
+                playready: {
+                    headers: {
+                        'pallycon-customdata-v2': playreadyToken
+                    },
+                    licenseAcquisitionURL: licenseUri
+                }
+            };
+        } else if ('Widevine' === drmType) {
+            const widevineCert = await getWidevineCertBinary();
+            drmConfiguration = {
+                widevine: {
+                    headers: {
+                        'pallycon-customdata-v2': widevineToken
+                    },
+                    licenseAcquisitionURL: licenseUri,
+                    certificate: widevineCert
+                }
+            };
+        }
 
         player.source = {
             sources: {

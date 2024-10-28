@@ -16,7 +16,7 @@ function initApp() {
     }
 }
 
-function initPlayer() {
+async function initPlayer() {
     let contentUri, playerConfig = {};
     // Create a Player instance.
     const video = document.getElementById('my-player');
@@ -80,7 +80,8 @@ function initPlayer() {
                     },
                     advanced: {
                         'com.widevine.alpha': {
-                            'persistentStateRequired': true
+                            'persistentStateRequired': true,
+                            'serverCertificateUri': widevineCertUri,
                         }
                     }
                 },

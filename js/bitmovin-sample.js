@@ -18,7 +18,8 @@ var source = {
             LA_URL: licenseUri,
             mediaKeySystemConfig: {
                 persistentState: 'required'
-            }
+            },
+            serverCertificate: ''
         },
         playready: {
             LA_URL: licenseUri,
@@ -71,8 +72,12 @@ function setCustomData(type, request) {
     }
 }
 
-checkSupportedDRM().then(()=> {
+checkSupportedDRM().then(async () => {
     checkBrowser();
+    // Setting widevine certificate
+    if (drmType === 'Widevine') {
+        source.drm.widevine.serverCertificate = await getWidevineCertBinary();
+    }
     player.load(source).then(
         function () {
             console.log('Successfully created Bitmovin Player instance');
