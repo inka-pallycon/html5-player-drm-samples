@@ -27,7 +27,7 @@ const prepareCertificate = function (rawResponse) {
     return certificate;
 };
 
-async function configurePlayer() {
+function configurePlayer() {    
     let settings = {
         licenseKey: radiantKey,
         autoHeightMode: true,
@@ -57,12 +57,7 @@ async function configurePlayer() {
         settings.shakaDrm = {
             servers: {
                 "com.widevine.alpha": licenseUri
-            },
-            advanced: {
-                'com.widevine.alpha': {
-                    serverCertificateUri: widevineCertUri,
-                },
-            },
+            }
         };
         settings.shakaRequestConfiguration = {
             license: {

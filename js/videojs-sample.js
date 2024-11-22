@@ -1,7 +1,7 @@
 var player = videojs('my-player');
 
 function configureDRM() {
-    player.ready(async function () {
+    player.ready(function () {
         let playerConfig;
         player.eme();
         if ('FairPlay' === drmType) {
@@ -51,36 +51,28 @@ function configureDRM() {
             playerConfig = {
                 src: dashUri,
                 type: 'application/dash+xml',
-                keySystemOptions: [
-                    {
-                        name: 'com.microsoft.playready',
-                        options: {
-                            serverURL: licenseUri,
-                            httpRequestHeaders: {
-                                'pallycon-customdata-v2': playreadyToken,
-                            },
-                        },
-                    },
-                ],
+                keySystems: {
+                    'com.microsoft.playready': {
+                        url: licenseUri,
+                        licenseHeaders:{
+                            'pallycon-customdata-v2': playreadyToken
+                        }
+                    }
+                }
             };
         } else if ('Widevine' === drmType) {
-            const widevineCert = await getWidevineCertBase64()
             playerConfig = {
                 src: dashUri,
                 type: 'application/dash+xml',
-                keySystemOptions: [
-                    {
-                        name: 'com.widevine.alpha',
-                        options: {
-                            serverURL: licenseUri,
-                            serverCertificate: widevineCert,
-                            httpRequestHeaders: {
-                                'pallycon-customdata-v2': widevineToken,
-                            },
-                            persistentState: 'required',
+                keySystems: {
+                    'com.widevine.alpha': {
+                        url: licenseUri,
+                        licenseHeaders:{
+                            'pallycon-customdata-v2': widevineToken
                         },
-                    },
-                ],
+                        persistentState: 'required'
+                    }
+                }
             };
         } else {
             console.log("No DRM supported in this browser");

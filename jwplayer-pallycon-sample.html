@@ -2,45 +2,44 @@
 <html>
 
 <head>
-    <title>VideoJS PallyCon Multi-DRM Sample</title>
+    <title>JW Player PallyCon Multi-DRM Sample</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/mvp.css">
     <link rel="stylesheet" href="css/scrolldown.css">
 
-    <!-- VideoJS library and css -->
-    <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
-    <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-eme@3.8.0/dist/videojs-contrib-eme.min.js"></script>
+    <!-- TODO: You need to put your JW Player library URL here -->
+    <script type="text/javascript" src=""></script> 
 </head>
 
 <body>
     <header>
-        <h1>PallyCon - VideoJS Sample</h1>
-        <img alt="videojs logo" src="./media/videojs-logo.png">
+        <h1>PallyCon - JW Player Sample</h1>
+        <img alt="JW player logo" src="./media/jwplayer-logo.png">
 
         <p>This sample shows how to play streaming content (DASH or HLS) protected by multi-DRM (PlayReady, Widevine,
-            FairPlay Streaming) using VideoJS player. Please check the PallyCon and VideoJS Docs sites for more
+            FairPlay Streaming) using JW Player. Please check the PallyCon and JW Player Docs sites for more
             information.</p>
         <p>
             <a href="https://pallycon.com/docs/en/multidrm/clients/html5-player/" target="_blank"><i>PallyCon Docs
                     &nearr;</i></a>
-            <a href="https://docs.videojs.com/index.html" target="_blank"><b>Visit VideoJS docs &nearr;</b></a>
+            <a href="https://developer.jwplayer.com/jwplayer/docs/jw8-enable-drm-through-the-web-player" target="_blank"><b>Visit
+                    JW Player docs &nearr;</b></a>
         </p>
         <!-- Scroll down indicator CSS animation -->
         <div class="container">
             <div class="chevron"></div>
             <div class="chevron"></div>
             <div class="chevron"></div>
-          </div>        
+          </div>
     </header>
     <main>
         <hr>
+        <p>To run this sample, you firstly need to modify the html to input your own JW player library with enterprise license.</p>
         <code id="browserCheckResult"></code>
         <p>
-            <video id="my-player" class="video-js vjs-default-skin vjs-16-9" controls data-setup="{}">
-            </video>
+            <div id="myPlayer"></div>
         </p>
     </main>
     <footer>
@@ -49,6 +48,6 @@
 </body>
 
 <script type="text/javascript" src="js/pallycon-sample-helper.js"></script>
-<script type="text/javascript" src="js/videojs-sample.js"></script>
+<script type="text/javascript" src="js/jwplayer-sample.js"></script>
 
 </html>
