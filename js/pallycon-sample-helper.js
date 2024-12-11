@@ -8,6 +8,8 @@ var hlsUri = 'https://contents.pallycon.com/bunny/hls/master.m3u8';
 
 var licenseUri = 'https://license-global.pallycon.com/ri/licenseManager.do';
 
+var widevineCertUri = 'https://license-global.pallycon.com/ri/widevineCert.do?siteId=DEMO'; // for cert
+
 // Replace the DEMO site ID with yours when you test your own FPS content.
 var fairplayCertUri = 'https://license-global.pallycon.com/ri/fpsKeyManager.do?siteId=DEMO'; // for base64 encoded binary cert data
 var fairplayCertDerUri = 'https://license-global.pallycon.com/ri/fpsCert.do?siteId=DEMO'; // for cert .der file download 
@@ -65,6 +67,33 @@ function checkBrowser() {
     console.log(result);
 
   return browser;
+}
+
+// get widevine certificate binary data
+async function getWidevineCertBinary() {
+  let widevineCert;
+  const response = await fetch(widevineCertUri);
+  await response.body
+      .getReader()
+      .read()
+      .then((res) => {
+        widevineCert = new Uint8Array(res.value);
+      });
+
+  return widevineCert;
+}
+
+// get widevine certificate base64 encoded data
+async function getWidevineCertBase64() {
+  let widevineCert;
+  const response = await fetch(widevineCertUri);
+  await response.body
+      .getReader()
+      .read()
+      .then((res) => {
+        widevineCert = btoa(String.fromCharCode(...new Uint8Array(res.value)))
+      });
+  return widevineCert;
 }
 
 // checks which DRM is supported by the browser
