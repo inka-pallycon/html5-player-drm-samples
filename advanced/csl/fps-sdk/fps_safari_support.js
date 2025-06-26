@@ -1,21 +1,3 @@
-
-function uInt8ArrayToString(array) {
-    return String.fromCharCode.apply(null, array);
-}
-
-function stringToUInt8Array(str)
-{
-    return Uint8Array.from(str, c => c.charCodeAt(0));
-}
-
-function base64DecodeUint8Array(input) {
-    return Uint8Array.from(atob(input), c => c.charCodeAt(0));
-}
-
-function base64EncodeUint8Array(input) {
-    return btoa(uInt8ArrayToString(input));
-}
-
 function waitFor(target, type) {
 
     return new Promise(resolve => {

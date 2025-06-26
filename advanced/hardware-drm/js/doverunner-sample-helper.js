@@ -37,38 +37,27 @@ function setFairPlayToken(newFairPlayToken) {
 
 // Detect the browser and set proper DRM type
 function checkBrowser() {
-  var agent = navigator.userAgent.toLowerCase(),
-    name = navigator.appName,
-    browser;
+  const agent = navigator.userAgent.toLowerCase();
+  const name = navigator.appName;
+  let detectedBrowser = 'Unknown';
 
-  if (name === 'Microsoft Internet Explorer' || agent.indexOf('trident') > -1 || agent.indexOf('edge/') > -1) {
-    browser = 'ie';
-    if (name === 'Microsoft Internet Explorer') { // IE old version (IE 10 or Lower)
-      agent = /msie ([0-9]{1,}[\.0-9]{0,})/.exec(agent);
-      // browser += parseInt(agent[1]);
-    } else if (agent.indexOf('edge/') > -1) { // Edge
-      browser = 'Edge';
-    }
-  } else if (agent.indexOf('safari') > -1) { // Chrome or Safari
-    if (agent.indexOf('opr') > -1) { // Opera
-      browser = 'Opera';
-    } else if (agent.indexOf('whale') > -1) { // Chrome
-      browser = 'Whale';
-    } else if (agent.indexOf('edg/') > -1 || agent.indexOf('Edge/') > -1) { // Chrome
-      browser = 'Edge';
-    } else if (agent.indexOf('chrome') > -1) { // Chrome
-      browser = 'Chrome';
-    } else { // Safari
-      browser = 'Safari';
-    }
-  } else if (agent.indexOf('firefox') > -1) { // Firefox
-    browser = 'firefox';
+  if (name === 'Microsoft Internet Explorer' || agent.includes('trident') || agent.includes('edge/')) {
+    detectedBrowser = agent.includes('edge/') ? 'Edge' : 'IE';
+  } else if (agent.includes('safari')) {
+    if (agent.includes('opr')) detectedBrowser = 'Opera';
+    else if (agent.includes('whale')) detectedBrowser = 'Whale';
+    else if (agent.includes('edg/') || agent.includes('Edge/')) detectedBrowser = 'Edge';
+    else if (agent.includes('chrome')) detectedBrowser = 'Chrome';
+    else detectedBrowser = 'Safari';
+  } else if (agent.includes('firefox')) {
+    detectedBrowser = 'Firefox';
   }
 
-    // The below three lines are for the sample code only. May need to be removed.
-    var result = "Running in " + browser + ". " + drmType + " supported.";
-    document.getElementById("browserCheckResult").innerHTML = result;
-    console.log(result);
+  browser = detectedBrowser;
+  const result = `Running in ${browser}. ${drmType} supported.`;
+  const browserCheckElement = document.getElementById('browserCheckResult');
+  if (browserCheckElement) browserCheckElement.innerHTML = result;
+  console.log(result);
 
   return browser;
 }
@@ -98,15 +87,6 @@ const baseEmeConfig = [{
   }]
 }];
 
-// Widevine robustness levels in descending order
-const robustnessLevels = [
-  'HW_SECURE_ALL',
-  'HW_SECURE_DECODE', 
-  'HW_SECURE_CRYPTO',
-  'SW_SECURE_DECODE',
-  'SW_SECURE_CRYPTO'
-];
-
 // Create EME config with robustness
 function createEmeConfigWithRobustness(videoRobustness, audioRobustness) {
   return [{
@@ -126,6 +106,15 @@ async function getWidevineHighestSecurityConfig() {
   const keySystems = isWindowsChrome() ? 
       ['com.widevine.alpha.experiment', 'com.widevine.alpha'] : 
       ['com.widevine.alpha'];
+
+  // Widevine robustness levels in descending order
+  const robustnessLevels = [
+    'HW_SECURE_ALL',
+    'HW_SECURE_DECODE', 
+    'HW_SECURE_CRYPTO',
+    'SW_SECURE_DECODE',
+    'SW_SECURE_CRYPTO'
+  ];
 
   // Try with robustness levels
   for (const keySystem of keySystems) {

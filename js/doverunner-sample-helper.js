@@ -34,38 +34,27 @@ function setFairPlayToken(newFairPlayToken) {
 
 // Detect the browser and set proper DRM type
 function checkBrowser() {
-  var agent = navigator.userAgent.toLowerCase(),
-    name = navigator.appName,
-    browser;
+  const agent = navigator.userAgent.toLowerCase();
+  const name = navigator.appName;
+  let detectedBrowser = 'Unknown';
 
-  if (name === 'Microsoft Internet Explorer' || agent.indexOf('trident') > -1 || agent.indexOf('edge/') > -1) {
-    browser = 'ie';
-    if (name === 'Microsoft Internet Explorer') { // IE old version (IE 10 or Lower)
-      agent = /msie ([0-9]{1,}[\.0-9]{0,})/.exec(agent);
-      // browser += parseInt(agent[1]);
-    } else if (agent.indexOf('edge/') > -1) { // Edge
-      browser = 'Edge';
-    }
-  } else if (agent.indexOf('safari') > -1) { // Chrome or Safari
-    if (agent.indexOf('opr') > -1) { // Opera
-      browser = 'Opera';
-    } else if (agent.indexOf('whale') > -1) { // Chrome
-      browser = 'Whale';
-    } else if (agent.indexOf('edg/') > -1 || agent.indexOf('Edge/') > -1) { // Chrome
-      browser = 'Edge';
-    } else if (agent.indexOf('chrome') > -1) { // Chrome
-      browser = 'Chrome';
-    } else { // Safari
-      browser = 'Safari';
-    }
-  } else if (agent.indexOf('firefox') > -1) { // Firefox
-    browser = 'firefox';
+  if (name === 'Microsoft Internet Explorer' || agent.includes('trident') || agent.includes('edge/')) {
+    detectedBrowser = agent.includes('edge/') ? 'Edge' : 'IE';
+  } else if (agent.includes('safari')) {
+    if (agent.includes('opr')) detectedBrowser = 'Opera';
+    else if (agent.includes('whale')) detectedBrowser = 'Whale';
+    else if (agent.includes('edg/') || agent.includes('Edge/')) detectedBrowser = 'Edge';
+    else if (agent.includes('chrome')) detectedBrowser = 'Chrome';
+    else detectedBrowser = 'Safari';
+  } else if (agent.includes('firefox')) {
+    detectedBrowser = 'Firefox';
   }
 
-    // The below three lines are for the sample code only. May need to be removed.
-    var result = "Running in " + browser + ". " + drmType + " supported.";
-    document.getElementById("browserCheckResult").innerHTML = result;
-    console.log(result);
+  browser = detectedBrowser;
+  const result = `Running in ${browser}. ${drmType} supported.`;
+  const browserCheckElement = document.getElementById('browserCheckResult');
+  if (browserCheckElement) browserCheckElement.innerHTML = result;
+  console.log(result);
 
   return browser;
 }
@@ -95,15 +84,6 @@ const baseEmeConfig = [{
   }]
 }];
 
-// Widevine robustness levels in descending order
-const robustnessLevels = [
-  'HW_SECURE_ALL',
-  'HW_SECURE_DECODE', 
-  'HW_SECURE_CRYPTO',
-  'SW_SECURE_DECODE',
-  'SW_SECURE_CRYPTO'
-];
-
 // Create EME config with robustness
 function createEmeConfigWithRobustness(videoRobustness, audioRobustness) {
   return [{
@@ -123,6 +103,15 @@ async function getWidevineHighestSecurityConfig() {
   const keySystems = isWindowsChrome() ? 
       ['com.widevine.alpha.experiment', 'com.widevine.alpha'] : 
       ['com.widevine.alpha'];
+
+  // Widevine robustness levels in descending order
+  const robustnessLevels = [
+    'HW_SECURE_ALL',
+    'HW_SECURE_DECODE', 
+    'HW_SECURE_CRYPTO',
+    'SW_SECURE_DECODE',
+    'SW_SECURE_CRYPTO'
+  ];
 
   // Try with robustness levels
   for (const keySystem of keySystems) {
@@ -178,60 +167,8 @@ async function checkSupportedDRM() {
   }
 }
 
-function arrayToString(array) {
-  var uint16array = new Uint16Array(array.buffer);
-  return String.fromCharCode.apply(null, uint16array);
-}
-
-function arrayBufferToString(buffer) {
-  var arr = new Uint8Array(buffer);
-  var str = String.fromCharCode.apply(String, arr);
-  // if(/[\u0080-\uffff]/.test(str)){
-  //     throw new Error("this string seems to contain (still encoded) multibytes");
-  // }
-  return str;
-}
-
-function base64DecodeUint8Array(input) {
-  var raw = window.atob(input);
-  var rawLength = raw.length;
-  var array = new Uint8Array(new ArrayBuffer(rawLength));
-
-  for (i = 0; i < rawLength; i++)
-    array[i] = raw.charCodeAt(i);
-
-  return array;
-}
-
-function base64EncodeUint8Array(input) {
-  var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-  var output = "";
-  var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-  var i = 0;
-
-  while (i < input.length) {
-    chr1 = input[i++];
-    chr2 = i < input.length ? input[i++] : Number.NaN;
-    chr3 = i < input.length ? input[i++] : Number.NaN;
-
-    enc1 = chr1 >> 2;
-    enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-    enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-    enc4 = chr3 & 63;
-
-    if (isNaN(chr2)) {
-      enc3 = enc4 = 64;
-    } else if (isNaN(chr3)) {
-      enc4 = 64;
-    }
-    output += keyStr.charAt(enc1) + keyStr.charAt(enc2) +
-      keyStr.charAt(enc3) + keyStr.charAt(enc4);
-  }
-  return output;
-}
-
 function getFairplayCert() {
-  var xmlhttp;
+  let xmlhttp;
   if (window.XMLHttpRequest) {
     xmlhttp = new XMLHttpRequest();
   } else {
@@ -240,7 +177,7 @@ function getFairplayCert() {
   xmlhttp.open("GET", fairplayCertUri, false);
   xmlhttp.send();
 
-  var fpsCert = shaka.util.Uint8ArrayUtils.fromBase64(xmlhttp.responseText);
+  let fpsCert = shaka.util.Uint8ArrayUtils.fromBase64(xmlhttp.responseText);
   return fpsCert;
 }
 
@@ -269,4 +206,48 @@ async function getWidevineCertBase64() {
         widevineCert = btoa(String.fromCharCode(...new Uint8Array(res.value)))
       });
   return widevineCert;
+}
+
+// Striung util functions
+
+function arrayToString(array) {
+  var uint16array = new Uint16Array(array.buffer);
+  return String.fromCharCode.apply(null, uint16array);
+}
+
+function arrayBufferToString(buffer) {
+  var arr = new Uint8Array(buffer);
+  var str = String.fromCharCode.apply(String, arr);
+  // if(/[\u0080-\uffff]/.test(str)){
+  //     throw new Error("this string seems to contain (still encoded) multibytes");
+  // }
+  return str;
+}
+
+function uInt8ArrayToString(array) {
+    return String.fromCharCode.apply(null, array);
+}
+
+function stringToUInt8Array(str)
+{
+    return Uint8Array.from(str, c => c.charCodeAt(0));
+}
+
+function base64DecodeUint8Array(input) {
+    return Uint8Array.from(atob(input), c => c.charCodeAt(0));
+}
+
+function base64EncodeUint8Array(input) {
+    return btoa(uInt8ArrayToString(input));
+}
+
+function base64DecodeUint8Array(input) {
+  var raw = window.atob(input);
+  var rawLength = raw.length;
+  var array = new Uint8Array(new ArrayBuffer(rawLength));
+
+  for (i = 0; i < rawLength; i++)
+    array[i] = raw.charCodeAt(i);
+
+  return array;
 }
