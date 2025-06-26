@@ -40,7 +40,7 @@ function configureDRM() {
                 src: hlsUri,
                 type: 'application/x-mpegurl',
                 keySystems: {
-                    'com.apple.fps.1_0': {
+                    'com.apple.fps': {
                         getCertificate: function (emeOptions, callback) {
                             videojs.xhr({
                                 url: fairplayCertUri,
