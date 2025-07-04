@@ -20,6 +20,7 @@ These samples show how to play streaming content (DASH or HLS) protected with mu
 ```
 
 - Bitmovin Player config : ([docs](https://bitmovin.com/docs/player/api-reference/web/web-sdk-api-reference-v8#/player/web/8/docs/enums/drm.mediakeysystemconfig.persistentstate.html))
+
 ```javascript
 widevine: {
     'mediaKeySystemConfig': {
