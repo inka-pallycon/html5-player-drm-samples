@@ -1,4 +1,4 @@
-# Doverunner Multi-DRM integration samples for HTML5 Players
+# DoveRunner Multi-DRM integration samples for HTML5 Players
 
 These samples show how to play streaming content (DASH or HLS) protected with multi-DRM (PlayReady, Widevine, FairPlay Streaming) using the HTML5 player from the web page of the service site.
 

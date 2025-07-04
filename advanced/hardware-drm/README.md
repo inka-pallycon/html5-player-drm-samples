@@ -1,4 +1,4 @@
-# Doverunner Multi-DRM HTML5 Player Samples for Hardware DRM
+# DoveRunner Multi-DRM HTML5 Player Samples for Hardware DRM
 
 These sample show how to play streaming content protected by hardware-level DRM in HTML5 players.
 
@@ -30,7 +30,7 @@ These sample show how to play streaming content protected by hardware-level DRM 
 
 ## Common requirements
 
-- The content used in the sample is a multi-key content created with [Doverunner CLI packager](https://doverunner.com/docs/en/multidrm/packaging/cli-packager/), where the SD track and HD track are packaged with different keys. You can set different rules for each track through the [security_policy setting](https://doverunner.com/docs/en/multidrm/license/license-token/#security-policy) in the Doverunner license token.
+- The content used in the sample is a multi-key content created with [DoveRunner CLI packager](https://doverunner.com/docs/en/multidrm/packaging/cli-packager/), where the SD track and HD track are packaged with different keys. You can set different rules for each track through the [security_policy setting](https://doverunner.com/docs/en/multidrm/license/license-token/#security-policy) in the DoveRunner license token.
 
   - The content is unencrypted for audio.
   - For Widevine L1, there is currently an issue where license rules are not controlled per track, so the Security Level set to the highest value is applied to all tracks.

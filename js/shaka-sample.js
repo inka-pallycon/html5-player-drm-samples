@@ -199,7 +199,7 @@ function parsingResponse(response) {
         const doverunnerObj = JSON.parse(responseText);
         if (doverunnerObj && doverunnerObj.errorCode && doverunnerObj.message) {
             if ("8002" != errorCode) {
-                alert("Doverunner Error : " + doverunnerObj.message + "(" + doverunnerObj.errorCode + ")");
+                alert("DoveRunner Error : " + doverunnerObj.message + "(" + doverunnerObj.errorCode + ")");
                 //window.alert('No Rights. Server Response ' + responseText);
             } else {
                 var errorObj = JSON.parse(doverunnerObj.message);
