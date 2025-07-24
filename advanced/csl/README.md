@@ -10,7 +10,7 @@
 | :-------: | :----------------: | :----------------------------------------------------------- |
 | Widevine  | :heavy_check_mark: | [Bitmovin Player](./bitmovin-player/bitmovin-player-doverunner-renewal-sample.html) |
 | PlayReady | :heavy_check_mark: | [Bitmovin Player](./bitmovin-player/bitmovin-player-doverunner-renewal-sample.html) |
-| FairPlay  | :heavy_check_mark: | [FPS SDK](./fps-sdk/fps_safari_hls_key_renewal-sample.html), [Video.js](./videojs-player/videojs-fairplay-renewal-sample.html) |
+| FairPlay  | :heavy_check_mark: | [FPS SDK](./fps-sdk/fps_safari_hls_key_renewal-sample.html), [Video.js](./videojs-player/videojs-fairplay-renewal-sample.html), [Shaka Player](./shaka-player/shaka-fairplay-renewal-sample.html) |
 
 
 
@@ -60,4 +60,35 @@ function startLicenseRenewal(player, session, interval = default_renewal_interva
 	... 
 }
 ```
+
+- [shaka-fairplay-renewal-sample.js](./shaka-player/shaka-fairplay-renewal-sample.js)
+
+```javascript
+var default_renewal_interval_sec = 600; // 10 minutes
+...
+
+async function startLicenseRenewal() {
+	...
+}
+```
+
+
+
+> *The Shaka Player restricts access to the drm_engine instance for accessing MediaKeySession in the public production build, so you should use a self-hosted version that exposes the drm_engine instance. This sample provides the simplest implementation using the debug mode library.*
+
+> *Additionally, the Shaka Player occasionally experiences unstable playback of multi-key content through `nativeHls`.* 
+>
+> *This can be resolved by setting `nativeHlsForFairplay` to `false` in the DRM configuration to enable playback through MSE (or MMS).*
+>
+> ```javascript
+> player.configure({
+>     drm: {
+>         ...
+>     },
+>     streaming: {
+>         useNativeHlsForFairPlay: false
+>     }
+> });
+> ```
+>
 
