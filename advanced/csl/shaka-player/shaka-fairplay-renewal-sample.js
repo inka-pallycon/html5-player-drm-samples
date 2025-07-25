@@ -79,9 +79,10 @@ async function initPlayer() {
                 }
             }
         },
-        // streaming: {
-        //     useNativeHlsForFairPlay: false
-        // }
+        streaming: {
+            lowLatencyMode: true,
+            // useNativeHlsForFairPlay: false
+        }
     });
 
     player.getNetworkingEngine().registerRequestFilter(function (type, request, context) {
