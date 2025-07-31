@@ -78,20 +78,6 @@ checkSupportedDRM().then(async () => {
     if (drmType === 'Widevine') {
         // Setting widevine certificate
         source.drm.widevine.serverCertificate = await getWidevineCertBinary();
-
-        // Set the highest player robustness.
-        const widevineSecureConfig = await getWidevineHighestSecurityConfig();        
-        source.drm.widevine.audioRobustness = widevineSecureConfig.audioRobustness;
-        source.drm.widevine.videoRobustness = widevineSecureConfig.videoRobustness;
-
-        if(supportL1 && isWindowsChrome()){
-            source.drm.widevine.keySystemPriority = ["com.widevine.alpha.experiment"];
-        }
-    }
-    else if (drmType === 'PlayReady') {        
-        if(supportSl3000) {
-            source.drm.playready.keySystemPriority = ["com.microsoft.playready.recommendation.3000"];
-        }
     }
 
     player.load(source).then(
