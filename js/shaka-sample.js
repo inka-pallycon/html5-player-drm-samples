@@ -90,21 +90,6 @@ async function initPlayer() {
                 },
             };
 
-            // Set the highest player robustness.
-            const widevineSecureConfig = await getWidevineHighestSecurityConfig();
-            playerConfig.drm.advanced['com.widevine.alpha'].videoRobustness = widevineSecureConfig.videoRobustness;
-            playerConfig.drm.advanced['com.widevine.alpha'].audioRobustness = widevineSecureConfig.audioRobustness;
-            
-            if(supportL1 && isWindowsChrome()){    
-                playerConfig.drm.preferredKeySystems = [
-                    'com.widevine.alpha.experiment',
-                    'com.widevine.alpha'
-                ]
-                playerConfig.drm.keySystemsMapping = {
-                    'com.widevine.alpha': 'com.widevine.alpha.experiment'
-                }
-            }
-
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
                 // Only add headers to license requests:
                 if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
@@ -123,18 +108,6 @@ async function initPlayer() {
                     autoLowLatencyMode: true,
                 },
             };
-
-            if (supportSl3000) {
-                playerConfig.drm.preferredKeySystems = [
-                    'com.microsoft.playready.recommendation.3000',
-                    'com.microsoft.playready.recommendation',
-                    'com.microsoft.playready',
-                ];
-
-                playerConfig.drm.keySystemsMapping = {
-                    'com.microsoft.playready': 'com.microsoft.playready.recommendation.3000',
-                };
-            }
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
                 // Only add headers to license requests:
@@ -212,16 +185,6 @@ function parsingResponse(response) {
 function onErrorEvent(event) {
     // Extract the shaka.util.Error object from the event.
     console.error('Error code', event.detail.code, 'object', event.detail);
-
-    // Support SL3000 but Contents is lower than SL3000
-    if (6006 === event.detail.code && supportSl3000) {
-        window.player.destroy();
-        supportSl3000 = false;
-        setTimeout(() => {
-            initPlayer();
-        }, 500);
-    }
-
     onError(event.detail);
 }
 

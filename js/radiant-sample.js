@@ -76,11 +76,7 @@ async function configurePlayer() {
         settings.shakaDrm = {
             servers: {
                 'com.microsoft.playready':  {
-                    serverURL: licenseUri,
-                    systemStringPriority: [
-                        'com.microsoft.playready.recommendation',
-                        'com.microsoft.playready',
-                    ],
+                    serverURL: licenseUri
                 }
             },
         };
