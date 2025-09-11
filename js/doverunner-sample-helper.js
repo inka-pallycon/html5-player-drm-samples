@@ -1,7 +1,5 @@
 var browser = 'Non-DRM browser';
 var drmType = 'No DRM';
-var supportSl3000 = false;
-var supportL1 = false;
 
 // Replace the DASH and HLS URIs when you test your own content. 
 var dashUri = 'https://drm-contents.doverunner.com/DEMO/app/big_buck_bunny/dash/stream.mpd';
@@ -59,108 +57,29 @@ function checkBrowser() {
   return browser;
 }
 
-function isWindowsChrome() {
-  return navigator.userAgent.indexOf("Windows") > -1 && navigator.userAgent.indexOf("Chrome") > -1;
-}
-
-// Request media key system access
-async function tryKeySystemAccess(keySystem, config) {
-  try {
-      await navigator.requestMediaKeySystemAccess(keySystem, config);
-      return true;
-  } catch {
-      return false;
-  }
-}
-
-// Base EME configuration
-const baseEmeConfig = [{
-  initDataTypes: ['cenc'],
-  videoCapabilities: [{
-      contentType: 'video/mp4;codecs="avc1.42E01E"'
-  }],
-  audioCapabilities: [{
-      contentType: 'audio/mp4;codecs="mp4a.40.2"'
-  }]
-}];
-
-// Create EME config with robustness
-function createEmeConfigWithRobustness(videoRobustness, audioRobustness) {
-  return [{
-      ...baseEmeConfig[0],
-      videoCapabilities: [{
-          ...baseEmeConfig[0].videoCapabilities[0],
-          robustness: videoRobustness
-      }],
-      audioCapabilities: [{
-          ...baseEmeConfig[0].audioCapabilities[0],
-          robustness: audioRobustness
-      }]
-  }];
-}
-
-async function getWidevineHighestSecurityConfig() {
-  const keySystems = isWindowsChrome() ? 
-      ['com.widevine.alpha.experiment', 'com.widevine.alpha'] : 
-      ['com.widevine.alpha'];
-
-  // Widevine robustness levels in descending order
-  const robustnessLevels = [
-    'HW_SECURE_ALL',
-    'HW_SECURE_DECODE', 
-    'HW_SECURE_CRYPTO',
-    'SW_SECURE_DECODE',
-    'SW_SECURE_CRYPTO'
-  ];
-
-  // Try with robustness levels
-  for (const keySystem of keySystems) {
-    for (const videoRobustness of robustnessLevels) {
-        for (const audioRobustness of robustnessLevels) {
-            const succeed = await tryKeySystemAccess(
-                keySystem, 
-                createEmeConfigWithRobustness(videoRobustness, audioRobustness)
-            );
-            
-            if (succeed) {
-                if (videoRobustness.startsWith('HW_SECURE_') || audioRobustness.startsWith('HW_SECURE_')) {
-                    supportL1 = true;
-                }
-                return { keySystem, videoRobustness, audioRobustness };
-            }
-        }
-    }
-  }
-
-  // Try without robustness if all failed
-  for (const keySystem of keySystems) {
-    const succeed = await tryKeySystemAccess(keySystem, baseEmeConfig);
-    if (succeed) {
-        return { keySystem, videoRobustness: null, audioRobustness: null };
-    }
-  }
-
-  return null;
-}
-
 async function checkSupportedDRM() {
   const drm = {
       Widevine: { name: 'Widevine', mediaKey: 'com.widevine.alpha' },
       PlayReady: { name: 'PlayReady', mediaKey: 'com.microsoft.playready' },
-      FairPlay: { name: 'FairPlay', mediaKey: 'com.apple.fps.1_0' }
+      FairPlay: { name: 'FairPlay', mediaKey: 'com.apple.fps' }
   };
+  
+  const baseEmeConfig = [{
+    initDataTypes: ['cenc'],
+    videoCapabilities: [{
+        contentType: 'video/mp4;codecs="avc1.42E01E"'
+    }],
+    audioCapabilities: [{
+        contentType: 'audio/mp4;codecs="mp4a.40.2"'
+    }]
+  }];
 
   for (const key in drm) {
       try {
-          const supported = await tryKeySystemAccess(drm[key].mediaKey, baseEmeConfig);
-          if (supported) {
-              drmType = drm[key].name;
-              console.log(`${drmType} support ok`);
-
-              if (drm[key].name === 'PlayReady') {
-                supportSl3000 = await tryKeySystemAccess('com.microsoft.playready.recommendation.3000', baseEmeConfig);
-              }
-          }
+          await navigator.requestMediaKeySystemAccess(drm[key].mediaKey, baseEmeConfig);
+          // If the requestMediaKeySystemAccess succeeds, we can assume the browser supports this DRM.
+          drmType = drm[key].name;
+          console.log(`${drmType} support ok`);
       } catch (e) {
           console.log(`${key} :: ${e}`);
       }
@@ -209,7 +128,6 @@ async function getWidevineCertBase64() {
 }
 
 // Striung util functions
-
 function arrayToString(array) {
   var uint16array = new Uint16Array(array.buffer);
   return String.fromCharCode.apply(null, uint16array);
@@ -226,15 +144,6 @@ function arrayBufferToString(buffer) {
 
 function uInt8ArrayToString(array) {
     return String.fromCharCode.apply(null, array);
-}
-
-function stringToUInt8Array(str)
-{
-    return Uint8Array.from(str, c => c.charCodeAt(0));
-}
-
-function base64DecodeUint8Array(input) {
-    return Uint8Array.from(atob(input), c => c.charCodeAt(0));
 }
 
 function base64EncodeUint8Array(input) {
