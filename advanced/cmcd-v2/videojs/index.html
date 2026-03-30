@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>VideoJS CMCD v2 Event Mode Sample</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-eme@5.5.1/dist/videojs-contrib-eme.js"></script>
+    <script src="./lib/videojs-cmcd.js"></script>
+    <script src="../../../shared/js/doverunner-base-helper.js"></script>
+    <script src="../shared/js/cmcd-utilities.js"></script>
+    <script src="./js/videojs-eventmode-sample.js"></script>
+    <link rel="stylesheet" href="../../../css/mvp.css">
+    <link rel="stylesheet" href="../../../css/scrolldown.css">
+
+    <style>
+        .features-info {
+            background: #f4f4f4;
+            border-left: 4px solid #490080;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .video-js {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>DoveRunner - VideoJS CMCD v2 Sample</h1>
+        <img alt="VideoJS logo" src="../../../media/videojs-logo.png" width="200">
+
+        <p>This sample demonstrates CMCD v2 event mode data transmission with DRM support and custom data through network interceptors using VideoJS player.</p>
+        <p>Custom data is added via VideoJS plugin architecture and xhr hooks for comprehensive player monitoring.</p>
+        <p>Please check the DoveRunner and VideoJS docs sites for more information.</p>
+        <p>
+            <a href="https://doverunner.com/docs/content-security/multi-drm/clients/html5-player/" target="_blank"><i>DoveRunner Docs &nearr;</i></a>
+            <a href="https://videojs.com/" target="_blank"><b>Visit VideoJS Docs &nearr;</b></a>
+        </p>
+        <!-- Scroll down indicator CSS animation -->
+        <div class="container">
+            <div class="chevron"></div>
+            <div class="chevron"></div>
+            <div class="chevron"></div>
+        </div>
+    </header>
+    <main>
+        <hr>
+        <code id="browserCheckResult"></code>
+        <p>
+            <video id="my-player" class="video-js vjs-default-skin vjs-16-9" controls data-setup="{}">
+            </video>
+        </p>
+
+        <div class="features-info">
+            <h3>Features:</h3>
+            <ul>
+                <li>✅ <strong>CMCD v2 Event Mode</strong> - JSON Batch reporting to <code id="cmcd-reporting-url">Loading...</code></li>
+                <li>✅ <strong>Batch Configuration:</strong>
+                    <ul>
+                        <li>Batch Size: <code>100 events</code></li>
+                        <li>Batch Timer: <code>30 seconds</code></li>
+                        <li>Time Interval: <code>10 seconds</code></li>
+                    </ul>
+                </li>
+                <li>✅ <strong>Custom data transmission via JSON body:</strong>
+                    <ul>
+                        <li><code>com.doverunner.player.device-type</code></li>
+                        <li><code>com.doverunner.player.browser-type</code></li>
+                        <li><code>com.doverunner.drm-auth-data</code></li>
+                        <li><code>com.doverunner.drm-license-requested-count</code></li>
+                        <li><code>com.doverunner.drm-license-latency-N</code> (dynamic per request)</li>
+                        <li><code>com.doverunner.drm-error-code-N</code> (dynamic per request)</li>
+                        <li><code>com.doverunner.drm-server-response-code-N</code> (dynamic per request)</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </main>
+    <footer>
+        <p align="center">Copyright 2026 <a href="https://doverunner.com/" target="_blank">DoveRunner</a></p>
+    </footer>
+</body>
+</html>

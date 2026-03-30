@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Shaka Player CMCD v2 Event Mode Sample</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.0/shaka-player.compiled.js"></script>
+    <script src="../../../shared/js/doverunner-base-helper.js"></script>
+    <script src="../shared/js/cmcd-utilities.js"></script>
+    <script src="./lib/eventModePlugin.js"></script>
+    <script src="./js/shaka-eventmode-sample.js"></script>
+    <link rel="stylesheet" href="../../../css/mvp.css">
+    <link rel="stylesheet" href="../../../css/scrolldown.css">
+    
+    <style>
+        .features-info {
+            background: #f4f4f4;
+            border-left: 4px solid #490080;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>DoveRunner - Shaka Player CMCD v2 Sample</h1>
+        <img alt="Shaka Player logo" src="../../../media/shaka-logo.png" width="200">
+        
+        <p>This sample demonstrates CMCD v2 event mode data transmission with DRM support and custom data through network interceptors using Shaka Player. </p>
+        <p> Please check the DoveRunner and Shaka Player docs sites for more information.</p>
+        <p>
+            <a href="https://doverunner.com/docs/content-security/multi-drm/clients/html5-player/" target="_blank"><i>DoveRunner Docs &nearr;</i></a>
+            <a href="https://shaka-player-demo.appspot.com/docs/api/index.html" target="_blank"><b>Visit Shaka Player Docs &nearr;</b></a>
+        </p>
+        <!-- Scroll down indicator CSS animation -->
+        <div class="container">
+            <div class="chevron"></div>
+            <div class="chevron"></div>
+            <div class="chevron"></div>
+        </div>
+    </header>
+    <main>
+        <hr>
+        <code id="browserCheckResult"></code>
+        <p>
+            <video id="my-player" width="100%" controls="true"></video>
+        </p>
+        
+        <div class="features-info">
+            <h3>Features:</h3>
+            <ul>
+                <li>✅ <strong>CMCD v2 Event Mode</strong> - JSON Batch reporting to <code id="cmcd-reporting-url">Loading...</code></li>
+                <li>✅ <strong>Batch Configuration:</strong>
+                    <ul>
+                        <li>Batch Size: <code>100 events</code></li>
+                        <li>Batch Timer: <code>30 seconds</code></li>
+                        <li>Time Interval: <code>10 seconds</code></li>
+                    </ul>
+                </li>
+                <li>✅ <strong>Custom data transmission via JSON body:</strong>
+                    <ul>
+                        <li><code>com.doverunner.player.device-type</code></li>
+                        <li><code>com.doverunner.player.browser-type</code></li>
+                        <li><code>com.doverunner.drm-auth-data</code></li>
+                        <li><code>com.doverunner.drm-license-requested-count</code></li>
+                        <li><code>com.doverunner.drm-license-latency-N</code> (dynamic per request)</li>
+                        <li><code>com.doverunner.drm-error-code-N</code> (dynamic per request)</li>
+                        <li><code>com.doverunner.drm-server-response-code-N</code> (dynamic per request)</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </main>
+    <footer>
+        <p align="center">Copyright 2026 <a href="https://doverunner.com/" target="_blank">DoveRunner</a></p>
+    </footer>
+</body>
+
+</html>
