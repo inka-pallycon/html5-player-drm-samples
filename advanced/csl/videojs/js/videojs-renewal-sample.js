@@ -81,56 +81,84 @@ function startLicenseRenewal(player, session, interval = default_renewal_interva
 
 
 function configureDRM() {
-    if ('FairPlay' !== activeDrm.type) {
-        console.error('This sample only supports FairPlay DRM.');
-        document.getElementById('browserCheckResult').innerHTML = 'Error: Only FairPlay DRM is supported.';
-        return;
-    }
-    
     player.eme();
 
-    let playerConfig = {
-        src: hlsUri,
-        type: 'application/x-mpegurl',
-        keySystems: {
-            'com.apple.fps': {
-                getCertificate: function (emeOptions, callback) {
-                    videojs.xhr({
-                        url: fairplayCertUri,
-                        method: 'GET',
-                    }, function (err, response, responseBody) {
-                        if (err) {
-                            callback(err)
-                            return
-                        }
-                        callback(null, base64DecodeUint8Array(responseBody));
-                    })
-                },
-                getContentId: function (emeOptions, initData) {
-                    const contentId = arrayToString(initData);
-                    return contentId.substring(contentId.indexOf('skd://') + 6);
-                },
-                getLicense: function (emeOptions, contentId, keyMessage, callback) {
-                    videojs.xhr({
-                        url: licenseUri,
-                        method: 'POST',
-                        responseType: 'text',
-                        body: 'spc=' + base64EncodeUint8Array(keyMessage),
-                        headers: {
-                            'Content-type': 'application/x-www-form-urlencoded',
-                            'pallycon-customdata-v2': fairplayToken
-                        }
-                    }, function (err, response, responseBody) {
-                        if (err) {
-                            callback(err)
-                            return
-                        }
-                        callback(null, base64DecodeUint8Array(responseBody))
-                    })
+    let playerConfig;
+
+    if ('FairPlay' === activeDrm.type) {
+        playerConfig = {
+            src: hlsUri,
+            type: 'application/x-mpegurl',
+            keySystems: {
+                'com.apple.fps': {
+                    getCertificate: function (emeOptions, callback) {
+                        videojs.xhr({
+                            url: fairplayCertUri,
+                            method: 'GET',
+                        }, function (err, response, responseBody) {
+                            if (err) {
+                                callback(err)
+                                return
+                            }
+                            callback(null, base64DecodeUint8Array(responseBody));
+                        })
+                    },
+                    getContentId: function (emeOptions, initData) {
+                        const contentId = arrayToString(initData);
+                        return contentId.substring(contentId.indexOf('skd://') + 6);
+                    },
+                    getLicense: function (emeOptions, contentId, keyMessage, callback) {
+                        videojs.xhr({
+                            url: licenseUri,
+                            method: 'POST',
+                            responseType: 'text',
+                            body: 'spc=' + base64EncodeUint8Array(keyMessage),
+                            headers: {
+                                'Content-type': 'application/x-www-form-urlencoded',
+                                'pallycon-customdata-v2': fairplayToken
+                            }
+                        }, function (err, response, responseBody) {
+                            if (err) {
+                                callback(err)
+                                return
+                            }
+                            callback(null, base64DecodeUint8Array(responseBody))
+                        })
+                    }
                 }
             }
+        };
+    } else {
+        if ('PlayReady' === activeDrm.type) {
+            console.log('PlayReady is not supported for this sample. Widevine DRM will be applied instead.');
         }
-    };
+        playerConfig = {
+            src: dashUri,
+            type: 'application/dash+xml',
+            keySystems: {
+                'com.widevine.alpha': {
+                    getCertificate: function (emeOptions, callback) {
+                        videojs.xhr({
+                            url: widevineCertUri,
+                            method: 'GET',
+                            responseType: 'arraybuffer',
+                        }, function (err, response, responseBody) {
+                            if (err) {
+                                callback(err)
+                                return
+                            }
+                            callback(null, responseBody);
+                        })
+                    },
+                    url: licenseUri,
+                    licenseHeaders: {
+                        'pallycon-customdata-v2': widevineToken
+                    },
+                    persistentState: 'required',
+                }
+            },
+        };
+    }
 
     player.tech().on('keysessioncreated', function(keySession) {
         console.log('Key session created:', keySession.keySession);

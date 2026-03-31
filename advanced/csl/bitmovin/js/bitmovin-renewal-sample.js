@@ -23,6 +23,13 @@ const config = {
 const source = {
     dash: dashUri,
     drm: {
+        widevine: {
+            LA_URL: licenseUri,
+            mediaKeySystemConfig: {
+                persistentState: 'required',
+            },
+            serverCertificate: ''
+        },
         playready: {
             LA_URL: licenseUri,
         }
@@ -33,9 +40,9 @@ const container = document.getElementById('my-player');
 const player = new bitmovin.player.Player(container, config);
 
 // Check supported DRM type
-if (activeDrm.type !== 'PlayReady') {
-    console.error('This sample only supports PlayReady DRM.');
-    document.getElementById('browserCheckResult').innerHTML = 'Error: Only PlayReady DRM is supported for this sample.';
+if (activeDrm.type === 'FairPlay') {
+    console.error('This sample does not support FairPlay DRM.');
+    document.getElementById('browserCheckResult').innerHTML = 'Error: FairPlay DRM is not supported for this sample.';
     throw new Error('Unsupported DRM type');
 }
 
@@ -62,7 +69,11 @@ player.on(bitmovin.player.PlayerEvent.DrmLicenseAdded, function(drmLicense){
 // If You Use Token Reset During Playback Such As CSL or KeyRotation or AirPlay,
 // Continue to create new tokens and Set them.
 function setCustomData(type, request) {
-    if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_PLAYREADY) {
+    if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_WIDEVINE) {
+        // let newWidevineToken = '';
+        // setWidevineToken(newWidevineToken);
+        request.headers['pallycon-customdata-v2'] = widevineToken;
+    } else if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_PLAYREADY) {
         // let newPlayReadyToken = '';
         // setPlayReadyToken(newPlayReadyToken);
         request.headers['pallycon-customdata-v2'] = playreadyToken;
