@@ -28,7 +28,6 @@ const source = {
             mediaKeySystemConfig: {
                 persistentState: 'required',
             },
-            serverCertificate: ''
         },
         playready: {
             LA_URL: licenseUri,
