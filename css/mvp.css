@@ -67,6 +67,7 @@ section aside {
     box-shadow: var(--box-shadow) var(--color-shadow);
     margin: 1rem;
     padding: 1.25rem;
+    text-align: center;
     width: var(--width-card);
 }
 
@@ -75,7 +76,10 @@ section aside:hover {
 }
 
 section aside img {
+    height: 150px;
+    width: auto;
     max-width: 100%;
+    object-fit: contain;
 }
 
 [hidden] {
