@@ -1,47 +1,44 @@
-# DoveRunner Multi-DRM integration samples for HTML5 Players
+# DoveRunner Multi-DRM HTML5 Player Samples
 
-These samples show how to play streaming content (DASH or HLS) protected with multi-DRM (PlayReady, Widevine, FairPlay Streaming) using the HTML5 player from the web page of the service site.
+Play DRM-protected streaming content using various HTML5 players.
 
-1. MPEG-DASH CENC content
-- DASH streaming content protected by PlayReady and Widevine DRM encrypted under the Common Encryption standard. Depending on your browser, PlayReady (Edge) or Widevine (Chrome, FireFox) DRM is applied.
-- Shaka, Video.js, and Bitmovin players use the highest robustness for Dash playback, depending on the client environment.
+## Supported Content & DRM
 
-2. HLS FPS(FairPlay Streaming) content
-- HTTP Live Streaming content encrypted with Sample AES and protected by FairPlay Streaming. Applies to Safari browsers running on Mac OS X (10.10 or later).
+| Content | DRM | Browser |
+|---------|-----|---------|
+| MPEG-DASH (CENC) | PlayReady, Widevine | Edge, Chrome, Firefox |
+| HLS (FairPlay) | FairPlay Streaming | Safari (macOS 10.10+, iOS) |
 
-3. Widevine Desktop's Unique DeviceId
-- To use Widevine CSL, PersistentState must be enabled on the player.
-- Add some samples.
-- Shaka Player config : ([docs](https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.AdvancedDrmConfiguration))
-```javascript
-'com.widevine.alpha': {
-    'persistentStateRequired': true
-}
+## Supported Players
+
+- Shaka Player
+- VideoJS
+- Bitmovin Player
+- THEOplayer
+- Radiant Media Player
+
+## Project Structure
+
+```
+├── basic/              # Basic DRM playback samples
+│   ├── shaka/
+│   ├── videojs/
+│   ├── bitmovin/
+│   ├── theoplayer/
+│   └── radiant/
+├── advanced/           # Advanced DRM features
+│   ├── hardware-drm/   # Widevine L1, PlayReady SL3000
+│   ├── csl/            # Concurrent Stream Limiting
+│   └── cmcd-v2/        # Common Media Client Data
+└── shared/             # Shared helper scripts
 ```
 
-- Bitmovin Player config : ([docs](https://bitmovin.com/docs/player/api-reference/web/web-sdk-api-reference-v8#/player/web/8/docs/enums/drm.mediakeysystemconfig.persistentstate.html))
+## Advanced Samples
 
-```javascript
-widevine: {
-    'mediaKeySystemConfig': {
-        'persistentState':'required'
-    }
-}
-```
+- [Hardware DRM](advanced/hardware-drm/README.md) - Hardware-level DRM (Widevine L1, PlayReady SL3000)
+- [CSL (Concurrent Stream Limiting)](advanced/csl/README.md) - License renewal for concurrent stream control
+- [CMCD v2](advanced/cmcd-v2/README.md) - Streaming analytics with Common Media Client Data
 
-- VideoJS Player config reference : ([github](https://github.com/videojs/videojs-contrib-eme/blob/main/src/eme.js#L64))
-```javascript
-{
-    name: 'com.widevine.alpha',
-    options: {
-        persistentState: 'required'
-    }
-}
-```
+## Documentation
 
-
-
-## Advanced
-
-- [CSL (Concurrent Stream Limiting)](advanced/csl/README.md)
-- [Hardware DRM](advanced/hardware-drm/README.md)
+Visit [DoveRunner Docs](https://doverunner.com/docs/content-security/multi-drm/clients/html5-player/) for more information.
