@@ -27,13 +27,6 @@ async function initPlayer() {
     // Listen for license renewal events (Shaka 5.0+ API)
     player.addEventListener('licenserenewal', onLicenseRenewal);
 
-    // Check supported DRM type
-    if (activeDrm.type !== 'FairPlay' && activeDrm.type !== 'PlayReady') {
-        console.error('This sample only supports FairPlay or PlayReady DRM.');
-        document.getElementById('browserCheckResult').innerHTML = 'Error: Only FairPlay or PlayReady DRM is supported.';
-        return;
-    }
-
     // Select content URI based on DRM type
     const contentUri = (activeDrm.type === 'FairPlay') ? hlsUri : dashUri;
 
@@ -56,6 +49,13 @@ async function initPlayer() {
                 serverCertificate: fairplayCert
             }
         };
+    } else if (activeDrm.type === 'Widevine') {
+        playerConfig.drm.advanced = {
+            [activeDrm.keySystem]: {
+                persistentStateRequired: true,
+                serverCertificateUri: widevineCertUri
+            }
+        };
     }
 
     player.configure(playerConfig);
@@ -76,6 +76,9 @@ async function initPlayer() {
             } else if (activeDrm.type === 'PlayReady') {
                 // PlayReady: just set custom header
                 request.headers['pallycon-customdata-v2'] = playreadyToken;
+            } else if (activeDrm.type === 'Widevine') {
+                // Widevine: just set custom header
+                request.headers['pallycon-customdata-v2'] = widevineToken;
             }
         }
     });
