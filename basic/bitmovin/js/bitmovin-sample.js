@@ -49,16 +49,7 @@ const source = {
 const container = document.getElementById('my-player');
 const player = new bitmovin.player.Player(container, config);
 
-function isLocalEnvironment() {
-    const hostname = location.hostname;
-    return hostname === 'localhost' ||
-           hostname === '127.0.0.1' ||
-           hostname.startsWith('192.168.') ||
-           hostname.startsWith('10.') ||
-           location.protocol === 'file:';
-}
-
-if ('YOUR_BITMOVIN_LICENSE_KEY' === config.key && !isLocalEnvironment()) {
+if ('YOUR_BITMOVIN_LICENSE_KEY' === config.key && location.hostname !== 'localhost') {
     window.alert('To run this sample, you need to input your bitmovin license key in bitmovin-sample.js file.');
 }
 
