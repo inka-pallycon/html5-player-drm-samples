@@ -43,9 +43,6 @@ async function initPlayer() {
                     }
                 }
             },
-            streaming: {
-                autoLowLatencyMode: true,
-            },
         };
 
 
@@ -85,9 +82,6 @@ async function initPlayer() {
                         }
                     }
                 },
-                streaming: {
-                    autoLowLatencyMode: true,
-                },
             };
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
@@ -98,14 +92,14 @@ async function initPlayer() {
                 }
             });
         } else if ('PlayReady' === activeDrm.type) {
+            // PlayReady: Use 'com.microsoft.playready' as the key system in drm.servers.
+            // DASH manifests specify PlayReady via UUID, which Shaka maps to 'com.microsoft.playready'.
+            // Using 'com.microsoft.playready.recommendation.3000' directly causes Shaka 6012 error.
             playerConfig = {
                 drm: {
                     servers: {
                         'com.microsoft.playready': licenseUri,
                     },
-                },
-                streaming: {
-                    autoLowLatencyMode: true,
                 },
             };
 

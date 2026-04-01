@@ -117,9 +117,6 @@ function setupDRM() {
                         serverCertificate: fairplayCert
                     }
                 }
-            },
-            streaming: {
-                autoLowLatencyMode: true,
             }
         };
 
@@ -161,9 +158,6 @@ function setupDRM() {
                         'serverCertificateUri': widevineCertUri,
                     }
                 }
-            },
-            streaming: {
-                autoLowLatencyMode: true,
             }
         };
 
@@ -190,13 +184,21 @@ function setupDRM() {
         playerConfig = {
             drm: {
                 servers: {
-                    [activeDrm.keySystem]: licenseUri,
+                    'com.microsoft.playready': licenseUri,
                 }
-            },
-            streaming: {
-                autoLowLatencyMode: true,
             }
         };
+
+        if (activeDrm.keySystem === 'com.microsoft.playready.recommendation.3000') {
+            playerConfig.drm.preferredKeySystems = [
+                'com.microsoft.playready.recommendation.3000',
+                'com.microsoft.playready.recommendation',
+                'com.microsoft.playready',
+            ];
+            playerConfig.drm.keySystemsMapping = {
+                'com.microsoft.playready': 'com.microsoft.playready.recommendation.3000',
+            };
+        }
 
         player.getNetworkingEngine().registerRequestFilter(function (type, request) {
             if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
@@ -220,7 +222,6 @@ function setupDRM() {
     }
 
     player.configure(playerConfig);
-    player.setTextTrackVisibility(true);
 }
 
 function trackLicenseRequest() {

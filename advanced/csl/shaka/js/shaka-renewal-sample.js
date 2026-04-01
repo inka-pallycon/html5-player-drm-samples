@@ -39,9 +39,6 @@ async function initPlayer() {
             // Automatic license renewal interval (FairPlay/PlayReady only)
             renewalIntervalSec: RENEWAL_INTERVAL_SEC
         },
-        streaming: {
-            autoLowLatencyMode: true,
-        },
     };
 
     // FairPlay requires server certificate
@@ -59,6 +56,21 @@ async function initPlayer() {
                 serverCertificateUri: widevineCertUri
             }
         };
+    } else if (activeDrm.type === 'PlayReady') {
+        playerConfig.drm.servers = {
+            'com.microsoft.playready': licenseUri,
+        };
+
+        if (activeDrm.keySystem === 'com.microsoft.playready.recommendation.3000') {
+            playerConfig.drm.preferredKeySystems = [
+                'com.microsoft.playready.recommendation.3000',
+                'com.microsoft.playready.recommendation',
+                'com.microsoft.playready',
+            ];
+            playerConfig.drm.keySystemsMapping = {
+                'com.microsoft.playready': 'com.microsoft.playready.recommendation.3000',
+            };
+        }
     }
 
     player.configure(playerConfig);

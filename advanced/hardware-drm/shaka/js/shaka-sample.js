@@ -43,9 +43,6 @@ async function initPlayer() {
                     }
                 }
             },
-            streaming: {
-                autoLowLatencyMode: true,
-            },
         };
 
 
@@ -85,9 +82,6 @@ async function initPlayer() {
                         }
                     }
                 },
-                streaming: {
-                    autoLowLatencyMode: true,
-                },
             };
 
             // Set the highest player robustness.
@@ -108,9 +102,6 @@ async function initPlayer() {
                     servers: {
                         'com.microsoft.playready': licenseUri,
                     },
-                },
-                streaming: {
-                    autoLowLatencyMode: true,
                 },
             };
 
@@ -143,10 +134,6 @@ async function initPlayer() {
             }
         });
     }
-
-        // This is caption option.
-        player.setTextTrackVisibility(true);
-
         // Try to load a manifest.
         // This is an asynchronous process.
         player.load(contentUri).then(function () {
