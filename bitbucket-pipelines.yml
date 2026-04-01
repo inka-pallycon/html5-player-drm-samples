@@ -1,0 +1,75 @@
+image: atlassian/default-image:4
+
+definitions:
+  caches:
+    sonar: ~/.sonar/cache
+
+  steps:
+    - step: &security-scan-step
+        name: Security Scan
+        script:
+          - pipe: atlassian/git-secrets-scan:3.2.0
+        artifacts:
+          - gitleaks-report.json
+
+    - step: &sonarcloud-analysis
+        name: SonarCloud Analysis
+        caches:
+          - sonar
+        script:
+          - export SONAR_SCANNER_VERSION=6.2.1.4610
+          - curl -sSLo sonar-scanner.zip "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux-x64.zip"
+          - unzip -q sonar-scanner.zip
+          - export PATH="$(pwd)/sonar-scanner-${SONAR_SCANNER_VERSION}-linux-x64/bin:${PATH}"
+          - sonar-scanner -Dsonar.token=${SONAR_TOKEN} -Dsonar.branch.name=${BITBUCKET_BRANCH}
+
+    - step: &deploy-github-release
+        name: Deploy to GitHub and Create Release
+        script:
+          - apt-get update && apt-get install -y jq
+
+          # Get latest merged PR info
+          - >
+            PR_INFO=$(curl -s -u "${BB_AUTH_USER}:${BB_AUTH_TOKEN}"
+            "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests?state=MERGED&sort=-updated_on&pagelen=1")
+
+          # Extract version from branch name (release/v2.4.0 -> v2.4.0)
+          - VERSION=$(echo "$PR_INFO" | jq -r '.values[0].source.branch.name' | sed 's/release\///')
+          - RELEASE_NOTES=$(echo "$PR_INFO" | jq -r '.values[0].description')
+          - PR_TITLE=$(echo "$PR_INFO" | jq -r '.values[0].title')
+
+          - echo "Version - $VERSION"
+
+          # Push to GitHub
+          - git remote add github https://${GITHUB_TOKEN}@github.com/doverunner/html5-player-drm-samples.git
+          - git push github main --force
+
+          # Create and push tag
+          - git tag -a $VERSION -m "$PR_TITLE"
+          - git push github $VERSION
+
+          # Create GitHub Release
+          - >
+            curl -X POST
+            -H "Authorization: token ${GITHUB_TOKEN}"
+            -H "Content-Type: application/json"
+            "https://api.github.com/repos/doverunner/html5-player-drm-samples/releases"
+            -d "{
+              \"tag_name\": \"$VERSION\",
+              \"name\": \"Release $VERSION\",
+              \"body\": $(echo "$RELEASE_NOTES" | jq -Rs .)
+            }"
+
+pipelines:
+  branches:
+    'release/*':
+      - step: *security-scan-step
+      - step: *sonarcloud-analysis
+    main:
+      - step: *security-scan-step
+      - step: *sonarcloud-analysis
+      - step: *deploy-github-release
+  pull-requests:
+    '**':
+      - step: *security-scan-step
+      - step: *sonarcloud-analysis
