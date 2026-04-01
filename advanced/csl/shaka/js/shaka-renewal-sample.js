@@ -38,7 +38,10 @@ async function initPlayer() {
             },
             // Automatic license renewal interval (FairPlay/PlayReady only)
             renewalIntervalSec: RENEWAL_INTERVAL_SEC
-        }
+        },
+        streaming: {
+            autoLowLatencyMode: true,
+        },
     };
 
     // FairPlay requires server certificate
