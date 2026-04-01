@@ -33,7 +33,7 @@ definitions:
             PR_INFO=$(curl -s -u "${BB_AUTH_USER}:${BB_AUTH_TOKEN}"
             "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests?state=MERGED&sort=-updated_on&pagelen=1")
 
-          # Extract version from branch name (release/v2.4.0 -> v2.4.0)
+          # Extract version from branch name (e.g., release/v2.4.0 -> v2.4.0)
           - VERSION=$(echo "$PR_INFO" | jq -r '.values[0].source.branch.name' | sed 's/release\///')
           - RELEASE_NOTES=$(echo "$PR_INFO" | jq -r '.values[0].description')
           - PR_TITLE=$(echo "$PR_INFO" | jq -r '.values[0].title')
@@ -73,3 +73,21 @@ pipelines:
     '**':
       - step: *security-scan-step
       - step: *sonarcloud-analysis
+  custom:
+    dry-run-github-deploy:
+      - step:
+          name: Dry Run - GitHub Deploy Test
+          script:
+            - apt-get update && apt-get install -y jq
+            - echo "=== DRY RUN MODE ==="
+            - echo "GITHUB_TOKEN exists:" && test -n "$GITHUB_TOKEN" && echo "YES" || echo "NO"
+            - echo "BB_AUTH_USER exists:" && test -n "$BB_AUTH_USER" && echo "YES" || echo "NO"
+            - echo "BB_AUTH_TOKEN exists:" && test -n "$BB_AUTH_TOKEN" && echo "YES" || echo "NO"
+            - PR_INFO=$(curl -s -u "${BB_AUTH_USER}:${BB_AUTH_TOKEN}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests?state=MERGED&sort=-updated_on&pagelen=1")
+            - VERSION=$(echo "$PR_INFO" | jq -r '.values[0].source.branch.name' | sed 's/release\///')
+            - PR_TITLE=$(echo "$PR_INFO" | jq -r '.values[0].title')
+            - echo "Latest merged PR title:" && echo "$PR_TITLE"
+            - echo "Detected version:" && echo "$VERSION"
+            - GITHUB_USER=$(curl -s -H "Authorization:token ${GITHUB_TOKEN}" "https://api.github.com/user" | jq -r '.login')
+            - echo "GitHub authenticated as:" && echo "$GITHUB_USER"
+            - echo "=== DRY RUN COMPLETE ==="
