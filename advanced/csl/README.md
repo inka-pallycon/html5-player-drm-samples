@@ -1,94 +1,80 @@
 # Concurrent Stream Limiting (CSL)
--  Sets the interval to renew the DRM license while playback to check the number of concurrent streams per user. The shorter the interval, the more accurate the check. But the DRM service fee may increase due to the high number of license requests.
 
-## Player Manual Setting ( CSL )
-- FairPlay and PlayReady do not renew when using other players, so you cannot check simultaneous access after the time specified by the console after the initial license is issued.
-- Widevine renews automatically. However, you must set the option to specify a unique id.( It's possible in any player )
-- Renewal Interval -> Please specify the same as the console. The license server extends the session for a specified amount of time on the console.
+License renewal during playback to check concurrent streams per user. Shorter intervals provide more accurate checks but increase license requests.
 
-|    DRM    |   Manual Setting   | Sample Code                                                  |
-| :-------: | :----------------: | :----------------------------------------------------------- |
-| Widevine  | :heavy_check_mark: | [Bitmovin Player](./bitmovin-player/bitmovin-player-doverunner-renewal-sample.html) |
-| PlayReady | :heavy_check_mark: | [Bitmovin Player](./bitmovin-player/bitmovin-player-doverunner-renewal-sample.html) |
-| FairPlay  | :heavy_check_mark: | [FPS SDK](./fps-sdk/fps_safari_hls_key_renewal-sample.html), [Video.js](./videojs-player/videojs-fairplay-renewal-sample.html), [Shaka Player](./shaka-player/shaka-fairplay-renewal-sample.html) |
+## Overview
 
+| DRM | Renewal Method | Supported Players |
+|-----|----------------|-------------------|
+| Widevine | Auto (CDM) | All players |
+| PlayReady | Manual | Shaka (5.0+), Bitmovin |
+| FairPlay | Manual | Shaka (5.0+), VideoJS, FPS SDK |
 
+> **Note:** Widevine license renewal is handled automatically by the CDM. Manual implementation is only required for FairPlay and PlayReady.
 
+## Shaka Player (5.0+)
 
+Uses the built-in `renewalIntervalSec` configuration and `licenserenewal` event.
 
-## TODO List
-- Set Renewal Interval
-- persistentState enabled in widevine 
-
-
-### Widevine
-- Support All Player ( persistentState must be set. )
-- WidevineCDM will not be able to identify Chrome uniquely on desktop systems. ( Windows, MacBook .. )
-- You can use the persistentState option to save and use your browser's unique id.
-- Bitmovin Player ex) [bitmovin-renewal-sample.js](./bitmovin-player/bitmovin-renewal-sample.js#L26)
 ```javascript
-widevine: {
-    'mediaKeySystemConfig': {
-        'persistentState':'required'
+// Configure license renewal interval
+player.configure({
+    drm: {
+        servers: { [keySystem]: licenseUri },
+        renewalIntervalSec: 600  // 10 minutes
     }
+});
+
+// Listen for renewal events
+player.addEventListener('licenserenewal', (event) => {
+    console.log('License renewed:', event);
+});
+```
+
+**Sample:** [shaka-renewal-sample.js](./shaka/js/shaka-renewal-sample.js)
+
+## Bitmovin Player
+
+Uses `player.drm.renewLicense()` with manual timer for PlayReady.
+
+```javascript
+player.on(bitmovin.player.PlayerEvent.DrmLicenseAdded, (event) => {
+    const licenseId = event.license.id;
+    setTimeout(() => {
+        player.drm.renewLicense(licenseId);
+    }, 600000);  // 10 minutes
+});
+```
+
+**Sample:** [bitmovin-renewal-sample.js](./bitmovin/js/bitmovin-renewal-sample.js)
+
+## VideoJS
+
+Uses MediaKeySession update for FairPlay license renewal.
+
+```javascript
+const renewalInterval = 600000; // 10 minutes
+
+function startLicenseRenewal(session) {
+    setInterval(async () => {
+        // Trigger license renewal via session update
+    }, renewalInterval);
 }
 ```
 
-### PlayReady 
-- Support Only Bitmovin Player
-- Bitmovin Player ex) [bitmovin-renewal-sample.js](./bitmovin-player/bitmovin-renewal-sample.js#L10)
-```javascript
-setTimeout(() => {
-    player.drm.renewLicense(licenseId)
-}, 600000);  // TODO set Renewal Interval milliseconds ( 10 minute )
-```
+**Sample:** [videojs-renewal-sample.js](./videojs/js/videojs-renewal-sample.js)
 
+## FPS SDK (Safari)
 
-### FairPlay 
-- Support Safari FPS SDK and video.js player
-- [fps_safari_support.js](./fps-sdk/fps_safari_support.js#L59)
-```javascript
-await delay(600000);  // TODO set Renewal Interval milliseconds ( 10 minute )
-```
-
-- [videojs-fairplay-renewal-sample.js](./videojs-player/videojs-fairplay-renewal-sample.js)
+Native FairPlay implementation with manual renewal.
 
 ```javascript
-var default_renewal_interval = 600_000; // 10 minutes
-
-function startLicenseRenewal(player, session, interval = default_renewal_interval) { 
-	... 
+async function renewLicense() {
+    await delay(600000);  // 10 minutes
+    // Request new license
 }
 ```
 
-- [shaka-fairplay-renewal-sample.js](./shaka-player/shaka-fairplay-renewal-sample.js)
+**Sample:** [fps_safari_support.js](./fps-sdk/js/fps_safari_support.js)
 
-```javascript
-var default_renewal_interval_sec = 600; // 10 minutes
-...
-
-async function startLicenseRenewal() {
-	...
-}
-```
-
-
-
-> *The Shaka Player restricts access to the drm_engine instance for accessing MediaKeySession in the public production build, so you should use a self-hosted version that exposes the drm_engine instance. This sample provides the simplest implementation using the debug mode library.*
-
-> *Additionally, the Shaka Player occasionally experiences unstable playback of multi-key content through `nativeHls`.* 
->
-> *This can be resolved by setting `nativeHlsForFairplay` to `false` in the DRM configuration to enable playback through MSE (or MMS).*
->
-> ```javascript
-> player.configure({
->     drm: {
->         ...
->     },
->     streaming: {
->         useNativeHlsForFairPlay: false
->     }
-> });
-> ```
->
 
