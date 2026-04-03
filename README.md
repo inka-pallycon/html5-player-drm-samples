@@ -28,8 +28,7 @@ Play DRM-protected streaming content using various HTML5 players.
 │   └── radiant/
 ├── advanced/           # Advanced DRM features
 │   ├── hardware-drm/   # Widevine L1, PlayReady SL3000
-│   ├── csl/            # Concurrent Stream Limiting
-│   └── cmcd-v2/        # Common Media Client Data
+│   └── csl/            # Concurrent Stream Limiting
 └── shared/             # Shared helper scripts
 ```
 
@@ -37,7 +36,6 @@ Play DRM-protected streaming content using various HTML5 players.
 
 - [Hardware DRM](advanced/hardware-drm/README.md) - Hardware-level DRM (Widevine L1, PlayReady SL3000)
 - [CSL (Concurrent Stream Limiting)](advanced/csl/README.md) - License renewal for concurrent stream control
-- [CMCD v2](advanced/cmcd-v2/README.md) - Streaming analytics with Common Media Client Data
 
 ## Documentation
 
