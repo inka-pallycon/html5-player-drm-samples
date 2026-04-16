@@ -43,7 +43,7 @@ definitions:
           # Push to GitHub (exclude Bitbucket-specific files via temporary branch)
           - git remote add github https://${GITHUB_TOKEN}@github.com/doverunner/html5-player-drm-samples.git
           - git checkout -b _github-deploy
-          - git rm bitbucket-pipelines.yml sonar-project.properties
+          - git rm bitbucket-pipelines.yml sonar-project.properties .gitleaks.toml
           - git commit -m "chore: remove CI config"
           - git push github _github-deploy:main --force
           - git checkout main
