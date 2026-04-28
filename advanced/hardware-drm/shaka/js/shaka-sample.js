@@ -28,6 +28,7 @@ async function initPlayer() {
     // Listen for error events.
     player.addEventListener('error', onErrorEvent);
 
+
     if ('FairPlay' === activeDrm.type) {
         contentUri = hlsUri;
         const fairplayCert = getFairplayCert();
@@ -86,8 +87,15 @@ async function initPlayer() {
 
             // Set the highest player robustness.
             const widevineSecureConfig = await getWidevineHighestSecurityConfig();
-            playerConfig.drm.advanced[activeDrm.keySystem].videoRobustness = widevineSecureConfig.videoRobustness;
-            playerConfig.drm.advanced[activeDrm.keySystem].audioRobustness = widevineSecureConfig.audioRobustness;
+            
+            alert(`videoRobustness: ${widevineSecureConfig.videoRobustness}, audioRobustness: ${widevineSecureConfig.audioRobustness}`);
+
+            if (widevineSecureConfig.videoRobustness) {
+                playerConfig.drm.advanced[activeDrm.keySystem].videoRobustness = [widevineSecureConfig.videoRobustness];
+            }
+            if (widevineSecureConfig.audioRobustness) {
+                playerConfig.drm.advanced[activeDrm.keySystem].audioRobustness = [widevineSecureConfig.audioRobustness];
+            }
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
                 // Only add headers to license requests:
@@ -142,6 +150,7 @@ async function initPlayer() {
         }).catch(function(e){onError(e); console.log(contentUri)}); // onError is executed if the asynchronous load fails.
 
         player.configure(playerConfig);
+        console.log(`Config: ${JSON.stringify(player.getNonDefaultConfiguration(), null, 2)}`);
 
 }
 
