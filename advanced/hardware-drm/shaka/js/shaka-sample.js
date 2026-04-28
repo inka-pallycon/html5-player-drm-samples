@@ -28,7 +28,6 @@ async function initPlayer() {
     // Listen for error events.
     player.addEventListener('error', onErrorEvent);
 
-
     if ('FairPlay' === activeDrm.type) {
         contentUri = hlsUri;
         const fairplayCert = getFairplayCert();
@@ -45,7 +44,6 @@ async function initPlayer() {
                 }
             },
         };
-
 
         player.getNetworkingEngine().registerRequestFilter(function (type, request) {
             if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
@@ -88,8 +86,6 @@ async function initPlayer() {
             // Set the highest player robustness.
             const widevineSecureConfig = await getWidevineHighestSecurityConfig();
             
-            alert(`videoRobustness: ${widevineSecureConfig.videoRobustness}, audioRobustness: ${widevineSecureConfig.audioRobustness}`);
-
             if (widevineSecureConfig.videoRobustness) {
                 playerConfig.drm.advanced[activeDrm.keySystem].videoRobustness = [widevineSecureConfig.videoRobustness];
             }
@@ -150,8 +146,6 @@ async function initPlayer() {
         }).catch(function(e){onError(e); console.log(contentUri)}); // onError is executed if the asynchronous load fails.
 
         player.configure(playerConfig);
-        console.log(`Config: ${JSON.stringify(player.getNonDefaultConfiguration(), null, 2)}`);
-
 }
 
 // If You Use Token Reset During Playback Such As CSL or KeyRotation or AirPlay,
