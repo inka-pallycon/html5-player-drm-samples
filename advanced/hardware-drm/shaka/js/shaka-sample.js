@@ -45,7 +45,6 @@ async function initPlayer() {
             },
         };
 
-
         player.getNetworkingEngine().registerRequestFilter(function (type, request) {
             if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
                 const originalPayload = new Uint8Array(request.body);
@@ -86,8 +85,13 @@ async function initPlayer() {
 
             // Set the highest player robustness.
             const widevineSecureConfig = await getWidevineHighestSecurityConfig();
-            playerConfig.drm.advanced[activeDrm.keySystem].videoRobustness = widevineSecureConfig.videoRobustness;
-            playerConfig.drm.advanced[activeDrm.keySystem].audioRobustness = widevineSecureConfig.audioRobustness;
+            
+            if (widevineSecureConfig.videoRobustness) {
+                playerConfig.drm.advanced[activeDrm.keySystem].videoRobustness = [widevineSecureConfig.videoRobustness];
+            }
+            if (widevineSecureConfig.audioRobustness) {
+                playerConfig.drm.advanced[activeDrm.keySystem].audioRobustness = [widevineSecureConfig.audioRobustness];
+            }
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
                 // Only add headers to license requests:
@@ -142,7 +146,6 @@ async function initPlayer() {
         }).catch(function(e){onError(e); console.log(contentUri)}); // onError is executed if the asynchronous load fails.
 
         player.configure(playerConfig);
-
 }
 
 // If You Use Token Reset During Playback Such As CSL or KeyRotation or AirPlay,
