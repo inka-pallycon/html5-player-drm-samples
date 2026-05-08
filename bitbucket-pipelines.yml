@@ -28,23 +28,42 @@ definitions:
         script:
           - apt-get update && apt-get install -y jq
 
-          # Get latest merged PR info
+          # Fetch recent merged PRs (50 = max pagelen)
           - >
             PR_INFO=$(curl -s -u "${BB_AUTH_USER}:${BB_AUTH_TOKEN}"
-            "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests?state=MERGED&sort=-updated_on&pagelen=1")
+            "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests?state=MERGED&sort=-updated_on&pagelen=50")
+
+          # Find the latest merged release/* PR
+          - RELEASE_PR=$(echo "$PR_INFO" | jq '[.values[] | select(.source.branch.name | startswith("release/"))][0]')
+          - |
+            if [ "$RELEASE_PR" = "null" ] || [ -z "$RELEASE_PR" ]; then
+              echo "No recent release/* PR found. Skipping GitHub deploy."
+              exit 0
+            fi
 
           # Extract version from branch name (e.g., release/v2.4.0 -> v2.4.0)
-          - VERSION=$(echo "$PR_INFO" | jq -r '.values[0].source.branch.name' | sed 's/release\///')
-          - RELEASE_NOTES=$(echo "$PR_INFO" | jq -r '.values[0].description')
-          - PR_TITLE=$(echo "$PR_INFO" | jq -r '.values[0].title')
+          - VERSION=$(echo "$RELEASE_PR" | jq -r '.source.branch.name' | sed 's|release/||')
+          - RELEASE_NOTES=$(echo "$RELEASE_PR" | jq -r '.description')
+          - PR_TITLE=$(echo "$RELEASE_PR" | jq -r '.title')
 
-          - echo "Version - $VERSION"
+          # Idempotency - skip if GitHub release for this version already exists
+          - >
+            RELEASE_HTTP=$(curl -s -o /dev/null -w "%{http_code}"
+            -H "Authorization: token ${GITHUB_TOKEN}"
+            "https://api.github.com/repos/doverunner/html5-player-drm-samples/releases/tags/$VERSION")
+          - |
+            if [ "$RELEASE_HTTP" = "200" ]; then
+              echo "GitHub release $VERSION already exists. Skipping GitHub deploy."
+              exit 0
+            fi
+
+          - echo "Deploying $VERSION to GitHub..."
 
           # Push to GitHub (exclude Bitbucket-specific files via temporary branch)
           - git remote add github https://${GITHUB_TOKEN}@github.com/doverunner/html5-player-drm-samples.git
           - git checkout -b _github-deploy
           - git rm bitbucket-pipelines.yml sonar-project.properties .gitleaks.toml
-          - git commit -m "chore: remove CI config"
+          - 'git commit -m "chore: remove CI config"'
           - git push github _github-deploy:main --force
           - git checkout main
           - git branch -D _github-deploy
